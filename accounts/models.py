@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
+from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class UserManager(BaseUserManager):
 
@@ -32,7 +34,9 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser field is_superuser must be True')
 
         return self.create_user(email=email, password=password, **extra_fields)
-    
+
+class ConnectedSocialMedia(models.Model):
+    media = models.CharField(max_length=30,unique=True)
 
 class User(AbstractBaseUser,PermissionsMixin):
 
@@ -50,19 +54,20 @@ class User(AbstractBaseUser,PermissionsMixin):
         (SUPERUSER, 'Super User'),
     )
     
-    fullname        = models.CharField(max_length=100, blank=True)
+    fullname        = models.CharField(max_length=30)
+    username        = models.CharField(max_length=50,unique=True)
     email           = models.EmailField(max_length=200, unique=True, db_index=True, null=False)
     role            = models.CharField(default='student',max_length=200, choices=ROLE_CHOICES, blank=True)
     is_verified     = models.BooleanField(default=False)
     is_active       = models.BooleanField(default=True)
-    is_staff       = models.BooleanField(default=True)
+    is_staff        = models.BooleanField(default=True)
     is_superuser    = models.BooleanField(default=False)
-    is_block        = models.BooleanField(default=False)
-    created_at      = models.DateField(auto_now_add=True)
-    updated_at      = models.DateField(auto_now=True)
+    created_at      = models.DateTimeField(auto_now_add=True)
+    updated_at      = models.DateTimeField(auto_now=True)
+    dob             = models.DateField(null=True,blank=True)
+    connected_media = models.ManyToManyField(ConnectedSocialMedia)
 
     USERNAME_FIELD  = 'email'
-    REQUIRED_FIELDS = ['fullname']
 
     objects = UserManager()
 
@@ -72,7 +77,7 @@ class User(AbstractBaseUser,PermissionsMixin):
 
 class Badges(models.Model):
     badge_name = models.CharField(max_length=50)
-    badge_icon = models.ImageField('badgeIcon')
+    badge_icon = models.ImageField(upload_to='badge-icons',null=True)
     badge_desc = models.TextField()
 
     class Meta:
@@ -91,21 +96,34 @@ class Hub(models.Model):
 
 class Batch(models.Model):
     hub = models.ForeignKey(Hub,on_delete=models.CASCADE)
-    number = models.CharField(max_length=50,unique=True)
+    number = models.PositiveIntegerField(unique=True)
+    batch_name = models.CharField(null=True,blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.batch_name:  # Only set batch_name if it's not already set
+            batch_number = self.number
+            if self.number<10:
+                batch_number = '0' +str(self.number)
+            self.batch_name = f'{self.hub.code}{batch_number}'.upper()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = 'batches'
-    
-    def get_name(self):
-        return f'{self.hub.code}{self.number}'.upper()
 
     def __str__(self) -> str:
-        return f'{self.hub.code}{self.number}'.upper()
+        return self.batch_name
     
+class Stack(models.Model):
+    name = models.CharField(max_length=20,unique=True)
+    icon = models.ImageField(upload_to='stack-icons',null=True,blank=True)
+
+    def __str__(self) -> str:
+        return self.name
 
 class UserProfile(models.Model):
     user                 = models.ForeignKey(User,on_delete=models.CASCADE)
     profile_image        = models.ImageField(upload_to='profiles',null=True)
+    stack                = models.ForeignKey(Stack,on_delete=models.CASCADE,null=True)
     about                = models.TextField(null=True)
     personal_website     = models.CharField(max_length=200,null=True)
     communication_cord   = models.BooleanField(default=False)
@@ -119,3 +137,25 @@ class UserProfile(models.Model):
 
     def __str__(self) -> str:
         return self.user.fullname
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+class LoginWithEmailData(models.Model):
+    email = models.CharField(max_length=50,default='not given')
+    time  = models.DateTimeField(auto_now_add=True)
+    token = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"LoginWithEmailData {self.pk}"
+
+    def get_time_elapsed(self):
+        now             = timezone.now()
+        elapsed_time    = now - self.time
+        elapsed_minutes = elapsed_time.total_seconds() // 60
+        return elapsed_minutes
+
+    def __str__(self):
+        return f"LoginWithEmailData {self.pk}"
