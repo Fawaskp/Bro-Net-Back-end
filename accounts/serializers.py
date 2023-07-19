@@ -1,5 +1,4 @@
-from rest_framework.serializers import ModelSerializer,PrimaryKeyRelatedField
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from .models import User,UserProfile,Hub,Batch,Stack
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import ValidationError
