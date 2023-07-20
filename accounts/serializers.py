@@ -8,7 +8,7 @@ from .helpers import email_validator
 class UserViewSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'fullname', 'email', 'password', 'is_superuser']
+        fields = ['id', 'fullname','username','email', 'password', 'is_profile_completed']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -16,7 +16,7 @@ class UserViewSerializer(ModelSerializer):
 class UserDetailSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['fullname','username','dob','is_verified']
+        fields = ['fullname','username','dob','is_verified','is_profile_completed']
 
 class LoginSerializer(ModelSerializer):
     
@@ -43,7 +43,7 @@ class LoginSerializer(ModelSerializer):
 class UserProfileSerializer(ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['profile_image','hub','batch','stack','is_profile_completed']
+        fields = ['profile_image','hub','batch','stack']
 
 class StackSerializer(ModelSerializer):
     class Meta:

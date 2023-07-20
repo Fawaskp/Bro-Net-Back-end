@@ -28,6 +28,7 @@ class UserManager(BaseUserManager):
 
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_verified', True)
+        extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('role' , 'super_user')
 
         if extra_fields.get('is_superuser') is not True:
@@ -60,12 +61,13 @@ class User(AbstractBaseUser,PermissionsMixin):
     role            = models.CharField(default='student',max_length=200, choices=ROLE_CHOICES, blank=True)
     is_verified     = models.BooleanField(default=False)
     is_active       = models.BooleanField(default=True)
-    is_staff        = models.BooleanField(default=True)
+    is_staff        = models.BooleanField(default=False)
     is_superuser    = models.BooleanField(default=False)
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
     dob             = models.DateField(null=True,blank=True)
     connected_media = models.ManyToManyField(ConnectedSocialMedia)
+    is_profile_completed = models.BooleanField(default=False)
 
     USERNAME_FIELD  = 'email'
 
@@ -100,7 +102,7 @@ class Batch(models.Model):
     batch_name = models.CharField(null=True,blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.batch_name:  # Only set batch_name if it's not already set
+        if not self.batch_name:
             batch_number = self.number
             if self.number<10:
                 batch_number = '0' +str(self.number)
@@ -130,7 +132,6 @@ class UserProfile(models.Model):
     tech_cord            = models.BooleanField(default=False)
     following_count      = models.PositiveIntegerField(default=0)
     followers_count      = models.PositiveIntegerField(default=0)
-    is_profile_completed = models.BooleanField(default=False)
     badges               = models.ManyToManyField(Badges)
     hub                  = models.ForeignKey(Hub,on_delete=models.CASCADE,null=True)
     batch                = models.ForeignKey(Batch,on_delete=models.CASCADE,null=True)

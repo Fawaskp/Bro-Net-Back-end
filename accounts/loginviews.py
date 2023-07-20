@@ -5,6 +5,49 @@ from rest_framework import status
 from .models import User,LoginWithEmailData
 from .token import create_jwt_pair_tokens
 from .helpers import email_validator,generate_token,email_sender
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+import re
+
+@api_view(['POST'])
+@csrf_exempt
+def check_username(request):
+    if request.method == 'POST':
+        username = request.data.get('username')
+        if username:
+            regex_pattern = r'^[a-zA-Z0-9_.-]+$'
+            if not re.match(regex_pattern, username):
+                return Response(data={"message": "Invalid username format", "status": 400})
+            is_exist = User.objects.filter(username=username).exists()
+            if is_exist:
+                return JsonResponse(data={"message":"given username already exist","status":409})
+            else:
+                return JsonResponse(data={'message':'username is acceptable'},status=202)
+        else:
+            return JsonResponse(data={"message":"username is important","status":400})
+    else:
+        return JsonResponse(data={'detail':"is not allowed"},status=405)
+
+@api_view(['POST'])
+@csrf_exempt
+def token(request):
+    if request.method == 'POST':
+        email = request.data.get('email')  # Retrieve email from request data
+        print(f"Received email: {request.data}")  # Add this line to print the received email
+        if email:
+            try:
+                userInstance = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response(data={"message": "Something went wrong", "status": 404})
+            else:
+                token = create_jwt_pair_tokens(userInstance)
+                return Response(data={'token': token}, status=202)
+        else:
+            return Response(data={"message": f"email is important", "status": 400})
+    else:
+        return Response(data={'detail': f"{request.method} is not allowed"}, status=405)
+
 
 class LoginWithEmail(APIView):
 
@@ -12,11 +55,11 @@ class LoginWithEmail(APIView):
         token = request.GET.get('token')
 
         if not token:
-            return Response(data={"message":"token didn't get with request","status":status.HTTP_403_FORBIDDEN})
+            return Response(data={"message":"token didn't get with request","status":400})
         try:
             login_instance = LoginWithEmailData.objects.get(token=token)
         except LoginWithEmailData.DoesNotExist:
-            return Response(data={'message': 'Enter Valid Link','status':status.HTTP_400_BAD_REQUEST})
+            return Response(data={'message': 'Enter Valid Link','status':400})
         
         email = login_instance.email
         elapsed_minutes = login_instance.get_time_elapsed()
@@ -29,7 +72,7 @@ class LoginWithEmail(APIView):
             else:
                 user = User.objects.get(email=email)
             login_instance.delete()
-            return Response(data={'Token': create_jwt_pair_tokens(user),'status':200}, status=status.HTTP_200_OK)
+            return Response(data={'Token': create_jwt_pair_tokens(user),'profile_completed':user.is_profile_completed,'status':200})
         else:
             login_instance.delete()
             return Response(data={'message': 'Your Link is expired','status':400})
@@ -46,7 +89,7 @@ class LoginWithEmail(APIView):
         result = email_sender(email,link)
         if result:
             LoginWithEmailData.objects.create(token=token,email=email)
-            return Response(data={'token':token},status=status.HTTP_200_OK)
+            return Response(data={'token':token,"status":status.HTTP_200_OK})
         else:
             return Response(data={'message':"Email couldn't send","status":status.HTTP_503_SERVICE_UNAVAILABLE})
 

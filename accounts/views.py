@@ -38,6 +38,7 @@ class UserProfileDetail(APIView):
             return Response({'Message' : 'User Profile Successfully Updated'}, status=status.HTTP_200_OK)
         else:
             return Response({'Message' : serializer.errors,"status":status.HTTP_400_BAD_REQUEST})
+        
     def get(self, request, id):
         try:
             user_profile = UserProfile.objects.get(user_id=id)

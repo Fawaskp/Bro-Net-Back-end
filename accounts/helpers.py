@@ -16,6 +16,7 @@ def email_validator(value:str) -> str:
         raise ValidationError("This is not a valid email, try again!")
     return value
 
+
 def email_sender(email: str, link: str) -> bool:
     try:
         html_message = f'''

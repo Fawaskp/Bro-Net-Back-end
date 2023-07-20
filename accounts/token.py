@@ -7,14 +7,14 @@ User = get_user_model()
 def create_jwt_pair_tokens(user: User):
     refresh = RefreshToken.for_user(user)
 
-    # Custom user details to be added to the tokens
     custom_data = {
         "user_id": user.id,
         "fullname": user.fullname,
+        "username": user.username,
         "email": user.email,
+        "is_profile_completed": user.is_profile_completed,
     }
 
-    # Update the token's payload with custom data
     refresh['custom'] = custom_data
 
     tokens = {

@@ -1,12 +1,13 @@
 from django.urls import path
-from .loginviews import LoginWithSocialMedia,LoginWithEmail
-from .views import ViewUsers, ViewUserProfile,UserProfileDetail,MyTokenObtainPairView,\
+from .loginviews import LoginWithSocialMedia,LoginWithEmail,token
+from .views import ViewUsers, ViewUserProfile,UserProfileDetail,\
 GetHubList,GetBatchList,GetStackList,UserDetail
+
+from .loginviews import check_username
 
 
 urlpatterns = [
     path('',ViewUsers.as_view()),
-    path('token/',MyTokenObtainPairView.as_view()),
     path('profile/',ViewUserProfile.as_view()),
     path('login/email/',LoginWithEmail.as_view()),
     path('login/social-media/',LoginWithSocialMedia.as_view()),
@@ -15,4 +16,7 @@ urlpatterns = [
     path('hub',GetHubList.as_view()),
     path('batch',GetBatchList.as_view()),
     path('stack',GetStackList.as_view()),
+
+    path('token/',token),
+    path('check-username',check_username)
 ]
