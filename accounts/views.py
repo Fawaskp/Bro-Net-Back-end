@@ -1,14 +1,10 @@
 from rest_framework.generics import ListAPIView,CreateAPIView,RetrieveUpdateDestroyAPIView
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from .models import User,UserProfile,Hub,Batch,Stack
-from .serializers import UserViewSerializer, UserDetailSerializer,UserProfileSerializer, \
-MyTokenObtainPairSerializer,LoginSerializer, HubSerializer,BatchSerializer, StackSerializer
-
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
+from .serializers.serializers import UserViewSerializer, UserDetailSerializer,UserProfileSerializer,\
+HubSerializer,BatchSerializer, StackSerializer
 
 class ViewUsers(ListAPIView):
     queryset = User.objects.all()
@@ -21,9 +17,9 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
 
 class ViewUserProfile(CreateAPIView):
     queryset = UserProfile.objects.all()
-    serializer_class = LoginSerializer
 
 class UserProfileDetail(APIView):
+    
     def put(self, request ,id):
         try:
             user_profile = UserProfile.objects.get(user_id=id)

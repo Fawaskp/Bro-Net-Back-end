@@ -3,8 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from .models import User,LoginWithEmailData
-from .token import create_jwt_pair_tokens
-from .helpers import email_validator,generate_token,email_sender
+from .helpers import email_validator,generate_token,email_sender,create_jwt_pair_tokens
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from rest_framework.decorators import api_view

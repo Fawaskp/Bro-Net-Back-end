@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from .models2 import SocialMedia,Skill
 
 class UserManager(BaseUserManager):
 
@@ -36,9 +35,6 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email=email, password=password, **extra_fields)
 
-class ConnectedSocialMedia(models.Model):
-    media = models.CharField(max_length=30,unique=True)
-
 class User(AbstractBaseUser,PermissionsMixin):
 
     STUDENT = 'student'
@@ -66,7 +62,6 @@ class User(AbstractBaseUser,PermissionsMixin):
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
     dob             = models.DateField(null=True,blank=True)
-    connected_media = models.ManyToManyField(ConnectedSocialMedia)
     is_profile_completed = models.BooleanField(default=False)
 
     USERNAME_FIELD  = 'email'
@@ -135,14 +130,12 @@ class UserProfile(models.Model):
     badges               = models.ManyToManyField(Badges)
     hub                  = models.ForeignKey(Hub,on_delete=models.CASCADE,null=True)
     batch                = models.ForeignKey(Batch,on_delete=models.CASCADE,null=True)
+    social_media         = models.ManyToManyField(SocialMedia) 
+    skills               = models.ManyToManyField(Skill)
 
     def __str__(self) -> str:
         return self.user.fullname
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
 
 class LoginWithEmailData(models.Model):
     email = models.CharField(max_length=50,default='not given')
