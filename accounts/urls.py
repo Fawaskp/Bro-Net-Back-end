@@ -19,7 +19,6 @@ urlpatterns = [
     path('skill',SkillView.as_view()),
     path('social-media',SocialMediaView.as_view()),
 
-
     path('token/',token),
     path('check-username',check_username)
 ]

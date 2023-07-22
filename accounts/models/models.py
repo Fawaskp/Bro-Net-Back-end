@@ -51,17 +51,17 @@ class User(AbstractBaseUser,PermissionsMixin):
         (SUPERUSER, 'Super User'),
     )
     
-    fullname        = models.CharField(max_length=30)
-    username        = models.CharField(max_length=50,unique=True)
-    email           = models.EmailField(max_length=200, unique=True, db_index=True, null=False)
-    role            = models.CharField(default='student',max_length=200, choices=ROLE_CHOICES, blank=True)
-    is_verified     = models.BooleanField(default=False)
-    is_active       = models.BooleanField(default=True)
-    is_staff        = models.BooleanField(default=False)
-    is_superuser    = models.BooleanField(default=False)
-    created_at      = models.DateTimeField(auto_now_add=True)
-    updated_at      = models.DateTimeField(auto_now=True)
-    dob             = models.DateField(null=True,blank=True)
+    fullname             = models.CharField(max_length=30)
+    username             = models.CharField(max_length=50,unique=True)
+    email                = models.EmailField(max_length=200, unique=True, db_index=True, null=False)
+    role                 = models.CharField(default='student',max_length=200, choices=ROLE_CHOICES, blank=True)
+    is_verified          = models.BooleanField(default=False)
+    is_active            = models.BooleanField(default=True)
+    is_staff             = models.BooleanField(default=False)
+    is_superuser         = models.BooleanField(default=False)
+    created_at           = models.DateTimeField(auto_now_add=True)
+    updated_at           = models.DateTimeField(auto_now=True)
+    dob                  = models.DateField(null=True,blank=True)
     is_profile_completed = models.BooleanField(default=False)
 
     USERNAME_FIELD  = 'email'
