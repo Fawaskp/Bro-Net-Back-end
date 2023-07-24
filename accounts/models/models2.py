@@ -2,13 +2,18 @@ from django.db import models
 
 class SocialMedia(models.Model):
     icon = models.ImageField(upload_to='social-media-icons',null=True)
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20,unique=True)
 
     class Meta:
         verbose_name_plural = ("Socila Media")
 
     def __str__(self) -> str:
         return self.name
+
+class UserSocialMediaAccounts(models.Model):
+    social_media = models.ForeignKey(SocialMedia,on_delete=models.CASCADE)
+    user         = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
+    url          = models.CharField(max_length=80)
 
 class Skill(models.Model):
     name  = models.CharField(max_length=30)
@@ -20,11 +25,11 @@ class Skill(models.Model):
 
 class Project(models.Model):
     user            = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
-    name            = models.CharField(max_length=50)
+    name            = models.CharField(max_length=50,unique=True)
     description     = models.TextField()
     logo            = models.ImageField('project-logo',null=True)
     repository_link = models.CharField(max_length=80)
-    live_link       = models.CharField(max_length=30)
+    live_link       = models.CharField(max_length=50)
     skills_used     = models.ManyToManyField(Skill)
 
     class Meta:

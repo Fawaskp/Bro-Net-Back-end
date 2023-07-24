@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from ..models import User,UserProfile,Hub,Batch,Stack
-
+from .serializers2 import SkillSerializer
 '''
 Serializers: 
 
@@ -11,6 +11,23 @@ Stack
 Hub
 Batch
 '''
+
+class HubSerializer(ModelSerializer):
+    class Meta:
+        model = Hub
+        fields = '__all__'
+
+
+class BatchSerializer(ModelSerializer):
+    class Meta:
+        model = Batch
+        fields = '__all__'
+
+
+class StackSerializer(ModelSerializer):
+    class Meta:
+        model = Stack
+        fields = '__all__'
 
 class UserViewSerializer(ModelSerializer):
     class Meta:
@@ -27,22 +44,11 @@ class UserDetailSerializer(ModelSerializer):
 
 
 class UserProfileSerializer(ModelSerializer):
+    skills = SkillSerializer(many=True, read_only=True)
+    hub    = HubSerializer()
+    batch  = BatchSerializer()
+    stack  = StackSerializer()
     class Meta:
         model = UserProfile
-        fields = ['profile_image','hub','batch','stack']
-
-class StackSerializer(ModelSerializer):
-    class Meta:
-        model = Stack
         fields = '__all__'
         
-class HubSerializer(ModelSerializer):
-    class Meta:
-        model = Hub
-        fields = '__all__'
-
-
-class BatchSerializer(ModelSerializer):
-    class Meta:
-        model = Batch
-        fields = '__all__'

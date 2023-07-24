@@ -51,7 +51,7 @@ class User(AbstractBaseUser,PermissionsMixin):
         (SUPERUSER, 'Super User'),
     )
     
-    fullname             = models.CharField(max_length=30)
+    fullname             = models.CharField(max_length=30,null=True)
     username             = models.CharField(max_length=50,unique=True)
     email                = models.EmailField(max_length=200, unique=True, db_index=True, null=False)
     role                 = models.CharField(default='student',max_length=200, choices=ROLE_CHOICES, blank=True)
@@ -69,19 +69,20 @@ class User(AbstractBaseUser,PermissionsMixin):
     objects = UserManager()
 
     def __str__(self):
-        return self.fullname
+        return self.username
+    
 
 
 class Badges(models.Model):
-    badge_name = models.CharField(max_length=50)
-    badge_icon = models.ImageField(upload_to='badge-icons',null=True)
-    badge_desc = models.TextField()
+    name = models.CharField(max_length=50)
+    icon = models.ImageField(upload_to='badge-icons',null=True)
+    description = models.TextField()
 
     class Meta:
         verbose_name_plural = 'Badges'
 
     def __str__(self):
-        return self.badge_name
+        return self.name
 
 class Hub(models.Model):
     location = models.CharField(max_length=50,unique=True)
@@ -118,7 +119,7 @@ class Stack(models.Model):
         return self.name
 
 class UserProfile(models.Model):
-    user                 = models.ForeignKey(User,on_delete=models.CASCADE)
+    user                 = models.ForeignKey(User,on_delete=models.CASCADE,blank=True)
     profile_image        = models.ImageField(upload_to='profiles',null=True)
     stack                = models.ForeignKey(Stack,on_delete=models.CASCADE,null=True)
     about                = models.TextField(null=True)
@@ -127,11 +128,10 @@ class UserProfile(models.Model):
     tech_cord            = models.BooleanField(default=False)
     following_count      = models.PositiveIntegerField(default=0)
     followers_count      = models.PositiveIntegerField(default=0)
-    badges               = models.ManyToManyField(Badges)
-    hub                  = models.ForeignKey(Hub,on_delete=models.CASCADE,null=True)
+    badges               = models.ManyToManyField(Badges,blank=True)
+    hub                  = models.ForeignKey(Hub,on_delete=models.CASCADE,null=True,blank=True)
     batch                = models.ForeignKey(Batch,on_delete=models.CASCADE,null=True)
-    social_media         = models.ManyToManyField(SocialMedia) 
-    skills               = models.ManyToManyField(Skill)
+    skills               = models.ManyToManyField(Skill,blank=True)
 
     def __str__(self) -> str:
         return self.user.fullname
