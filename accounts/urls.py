@@ -2,7 +2,7 @@ from django.urls import path
 from .viewslogin import LoginWithSocialMedia,LoginWithEmail,token
 from .views import ViewUsers, ViewUserProfile,UserProfileDetail,\
 GetHubList,GetBatchList,GetStackList,UserDetail
-from .views2 import SkillView,SocialMediaView
+from .views2 import SkillView,SocialMediaView,AddSkill,ProjectView,UserSocialMediaAccountsView
 from .viewslogin import check_username
 
 
@@ -17,7 +17,10 @@ urlpatterns = [
     path('batch',GetBatchList.as_view()),
     path('stack',GetStackList.as_view()),
     path('skill',SkillView.as_view()),
+    path('add-skill/<int:id>/',AddSkill.as_view()),
+    path('project/<int:id>/',ProjectView.as_view()),
     path('social-media',SocialMediaView.as_view()),
+    path('user-social-media',UserSocialMediaAccountsView.as_view()),
 
     path('token/',token),
     path('check-username',check_username)
