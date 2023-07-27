@@ -1,9 +1,8 @@
 from django.urls import path
-from .viewslogin import LoginWithSocialMedia,LoginWithEmail,token
+from .viewslogin import LoginWithSocialMedia,LoginWithEmail,token,check_username,is_user_auth,is_su_auth
 from .views import ViewUsers, ViewUserProfile,UserProfileDetail,\
 GetHubList,GetBatchList,GetStackList,UserDetail
-from .views2 import SkillView,SocialMediaView,AddSkill,ProjectView,UserSocialMediaAccountsView
-from .viewslogin import check_username
+from .views2 import SkillView,SocialMediaView,AddSkill,ProjectView,UserSocialMediaAccountsView,UserEducationView,WorkExperienceView
 
 
 urlpatterns = [
@@ -21,7 +20,11 @@ urlpatterns = [
     path('project/<int:id>/',ProjectView.as_view()),
     path('social-media',SocialMediaView.as_view()),
     path('user-social-media',UserSocialMediaAccountsView.as_view()),
+    path('user-education',UserEducationView.as_view()),
+    path('user-work-experience',WorkExperienceView.as_view()),
 
     path('token/',token),
-    path('check-username',check_username)
+    path('check-username',check_username),
+    path('is-user-auth',is_user_auth),
+    path('is-su-auth',is_su_auth),
 ]

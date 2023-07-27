@@ -1,6 +1,6 @@
 from django.urls import path
 from .views.userViews import StudetsView,CouncellorsView,AdminsView,CoOrdinatorsView,SkillsView,\
-SocialMediaView,BadgesView,ProjectView
+SocialMediaView,BadgesView,ProjectView,admin_login
 
 urlpatterns = [
     path('students/', StudetsView.as_view()),
@@ -12,4 +12,7 @@ urlpatterns = [
     path('social-media/', SocialMediaView.as_view()),
     path('badges/', BadgesView.as_view()),
     path('projects/', ProjectView.as_view()),
+
+    path('login',admin_login),
+
 ]
