@@ -6,6 +6,8 @@ from django.conf import settings
 import random
 import string
 import re
+import json 
+import base64
 
 User = get_user_model()
 
@@ -34,10 +36,60 @@ def generate_token(token_length=20):
     return token
 
 def email_validator(value:str) -> str:
+    '''
+    It takes email as input, return email if it is validated
+    otherwise return will be None
+    '''
     pat = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
     if not re.match(pat,value):
         raise ValidationError("This is not a valid email, try again!")
     return value
+
+def decode_jwt_payload(token):
+    try:
+        _, payload_base64, _ = token.split('.')
+        payload_bytes = base64.urlsafe_b64decode(payload_base64 + '==')
+        payload_json = payload_bytes.decode('utf-8')
+        return json.loads(payload_json)
+    except ValueError:
+        return None
+
+def authenticate_user(request,role):
+    auth_header = request.headers.get('Authorization')
+    
+    if not auth_header:
+        return None
+
+    if not auth_header.startswith('Bearer '):
+        return None
+
+    token = auth_header.split(' ')[1]
+    # print('Token :: ',token)
+    decoded_payload = decode_jwt_payload(json.loads(token).get('access'))
+    if decoded_payload:
+        # print('payload',decoded_payload)
+        user_id = decoded_payload.get('user_id')
+        try: 
+            user = User.objects.get(id=user_id)
+        except Exception as e : 
+            return None
+
+        if role=='user':
+            return True
+        elif role=='student' and user.role == 'student':
+            return True
+        elif role=='academic_counselor' and user.role == 'academic_counselor':
+            return True
+        elif role=='review_coordinator' and user.role == 'review_coordinator':
+            return True
+        elif role=='brototype_admin' and user.role == 'brototype_admin':
+            return True
+        elif role=='super_user' and user.role=='super_user' and user.is_superuser==True and user.is_staff==True:
+            return True
+        else:
+            return None
+    else:
+        return None
 
 
 def email_sender(email: str, link: str) -> bool:

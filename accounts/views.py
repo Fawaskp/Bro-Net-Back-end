@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import User,UserProfile,Hub,Batch,Stack
 from .serializers.serializers import UserViewSerializer, UserDetailSerializer,UserProfileSerializer,\
 HubSerializer,BatchSerializer, StackSerializer
+from .permission import IsAuthenticatedWithToken
 
 class ViewUsers(ListAPIView):
     queryset = User.objects.all()
@@ -19,7 +20,7 @@ class ViewUserProfile(CreateAPIView):
     queryset = UserProfile.objects.all()
 
 class UserProfileDetail(APIView):
-    
+    permission_classes = [IsAuthenticatedWithToken]
     def put(self, request ,id):
         try:
             user_profile = UserProfile.objects.get(user_id=id)
@@ -27,11 +28,15 @@ class UserProfileDetail(APIView):
             return Response({'Message' : 'Data Not Found',"status":status.HTTP_404_NOT_FOUND})
         
         serializer = UserProfileSerializer(user_profile, data=request.data)
+        print('Request Data : ',request.data)
         if serializer.is_valid():
             serializer.save()
             user_profile.is_profile_completed = True
             user_profile.save()
-            return Response({'Message' : 'User Profile Successfully Updated'}, status=status.HTTP_200_OK)
+            user = User.objects.get(id=id)
+            user.is_profile_completed = True
+            user.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'Message' : serializer.errors,"status":status.HTTP_400_BAD_REQUEST})
         

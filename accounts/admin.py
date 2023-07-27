@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import User,Badges,Hub,UserProfile,Batch,LoginWithEmailData,Stack
-from .models.models2 import Skill,Project,SocialMedia,Follow,UserSocialMediaAccounts
+from .models.models2 import Skill,Project,SocialMedia,Follow,UserSocialMediaAccounts,EducationCategory,UserEducation,WorkExperience
 
 admin.site.register(Skill)
 admin.site.register(Project)
@@ -15,3 +15,6 @@ admin.site.register(Batch)
 admin.site.register(LoginWithEmailData)
 admin.site.register(Stack)
 admin.site.register(UserSocialMediaAccounts)
+admin.site.register(EducationCategory)
+admin.site.register(UserEducation)
+admin.site.register(WorkExperience)

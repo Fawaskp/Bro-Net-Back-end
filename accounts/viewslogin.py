@@ -7,7 +7,9 @@ from .helpers import email_validator,generate_token,email_sender,create_jwt_pair
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
+from .helpers import authenticate_user
 import re
+import json
 
 @api_view(['POST'])
 @csrf_exempt
@@ -32,8 +34,7 @@ def check_username(request):
 @csrf_exempt
 def token(request):
     if request.method == 'POST':
-        email = request.data.get('email')  # Retrieve email from request data
-        print(f"Received email: {request.data}")  # Add this line to print the received email
+        email = request.data.get('email')
         if email:
             try:
                 userInstance = User.objects.get(email=email)
@@ -46,6 +47,20 @@ def token(request):
             return Response(data={"message": f"email is important", "status": 400})
     else:
         return Response(data={'detail': f"{request.method} is not allowed"}, status=405)
+
+
+@api_view(['POST'])
+@csrf_exempt
+def is_user_auth(request):
+    isVerified = authenticate_user(request,'user')
+    return JsonResponse(isVerified is not None,safe=False)
+
+@api_view(['POST'])
+@csrf_exempt
+def is_su_auth(request):
+    isVerified = authenticate_user(request,'super_user')
+    print('su verification',isVerified)
+    return JsonResponse(isVerified is not None,safe=False)
 
 
 class LoginWithEmail(APIView):
@@ -71,12 +86,11 @@ class LoginWithEmail(APIView):
             else:
                 user = User.objects.get(email=email)
             login_instance.delete()
-            return Response(data={'Token': create_jwt_pair_tokens(user),'profile_completed':user.is_profile_completed,'status':200})
+            return Response(data={'Token': create_jwt_pair_tokens(user),'is_profile_completed':user.is_profile_completed,'status':200})
         else:
             login_instance.delete()
             return Response(data={'message': 'Your Link is expired','status':400})
     
-
     def post(self,request):
         email = request.data.get('email')
         try:
@@ -108,5 +122,5 @@ class LoginWithSocialMedia(APIView):
             user = User.objects.create_user(email=email,password=email,username=username)
         else:
             user = User.objects.get(email=email)
-            
-        return Response(data={'Token': create_jwt_pair_tokens(user),'status':200}, status=status.HTTP_200_OK)
+
+        return Response(data={'Token': create_jwt_pair_tokens(user),'is_profile_completed':user.is_profile_completed,'status':200})

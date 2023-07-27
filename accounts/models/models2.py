@@ -15,6 +15,9 @@ class UserSocialMediaAccounts(models.Model):
     user         = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
     url          = models.CharField(max_length=80)
 
+    def __str__(self) -> str:
+        return f"{self.user.username} ({self.social_media.name})"
+
 class Skill(models.Model):
     name  = models.CharField(max_length=30)
     icon  = models.ImageField('skill-icons')
@@ -37,6 +40,31 @@ class Project(models.Model):
 
     def __str__(self):
         return f"{self.name} by {self.user.fullname}"
+
+class EducationCategory(models.Model):
+    name = models.CharField(max_length=60)
+
+    def __str__(self):
+        return self.name
+    
+
+class UserEducation(models.Model):
+    category = models.ForeignKey(EducationCategory,on_delete=models.SET_NULL,null=True)
+    user     = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
+    institution = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.category.name +' of ' + self.user.username
+
+class WorkExperience(models.Model):
+    user     = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
+    company  = models.CharField(max_length=100)
+    position = models.CharField(max_length=60)
+
+    def __str__(self) -> str:
+        return self.user.username + self.position + ' at ' + self.company 
+
 
 class Follow(models.Model):
     following_user = models.ForeignKey("accounts.User",on_delete=models.CASCADE,related_name='following_user_set')
