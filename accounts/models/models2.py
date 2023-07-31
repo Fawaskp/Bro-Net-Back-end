@@ -1,8 +1,8 @@
 from django.db import models
 
 class SocialMedia(models.Model):
-    icon = models.ImageField(upload_to='social-media-icons',null=True)
-    name = models.CharField(max_length=20,unique=True)
+    icon = models.ImageField(upload_to='social-media-icons',blank=True)
+    name = models.CharField(max_length=20,unique=True,blank=True)
 
     class Meta:
         verbose_name_plural = ("Socila Media")
@@ -19,9 +19,8 @@ class UserSocialMediaAccounts(models.Model):
         return f"{self.user.username} ({self.social_media.name})"
 
 class Skill(models.Model):
-    name  = models.CharField(max_length=30)
-    icon  = models.ImageField('skill-icons')
-    color = models.CharField(max_length=10)
+    name  = models.CharField(max_length=30,blank=True)
+    icon  = models.ImageField('skill-icons',blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -49,10 +48,11 @@ class EducationCategory(models.Model):
     
 
 class UserEducation(models.Model):
-    category = models.ForeignKey(EducationCategory,on_delete=models.SET_NULL,null=True)
-    user     = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
+    category    = models.ForeignKey(EducationCategory,on_delete=models.SET_NULL,null=True)
+    user        = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
     institution = models.CharField(max_length=100)
-    location = models.CharField(max_length=100)
+    course      = models.CharField(max_length=100,null=True)
+    location    = models.CharField(max_length=100)
 
     def __str__(self) -> str:
         return self.category.name +' of ' + self.user.username

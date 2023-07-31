@@ -1,4 +1,4 @@
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
 from accounts.models import User,Badges
 from accounts.models.models2 import Skill,SocialMedia,Project
 from ..serializers.userSerializer import CombinedUserSerializer,SkillSerializer,SocialMediaSerializer,BadgeSerializer,\
@@ -11,10 +11,6 @@ from django.http import JsonResponse
 from accounts.helpers import email_validator,create_jwt_pair_tokens
 from django.contrib.auth import authenticate, login, logout
 
-# from rest_framework.response import Response
-# from rest_framework.permissions import IsAuthenticated
-# from rest_framework.pagination import PageNumberPagination
-# from rest_framework.authentication import TokenAuthentication
 
 class StudetsView(ListCreateAPIView):
     queryset = User.objects.filter(role='student')
@@ -35,10 +31,20 @@ class CoOrdinatorsView(ListCreateAPIView):
 class SkillsView(ListCreateAPIView):
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
-
+    
 class SocialMediaView(ListCreateAPIView):
     queryset = SocialMedia.objects.all()
     serializer_class = SocialMediaSerializer
+
+class SkillsViewDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    lookup_field = 'id'
+
+class SocialMediaDetail(RetrieveUpdateDestroyAPIView):
+    queryset = SocialMedia.objects.all()
+    serializer_class = SocialMediaSerializer
+    lookup_field = 'id'
 
 class BadgesView(ListCreateAPIView):
     queryset = Badges.objects.all()
@@ -58,7 +64,6 @@ def admin_login(request):
             if not email_validator(email):
                 return Response(data={"message": "Invalid E-mail format", "status": 400})
             else:
-                print(email,' ',password)
                 username = authenticate(email=email,password=password)
                 if username:
                     try:

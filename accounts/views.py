@@ -28,7 +28,7 @@ class UserProfileDetail(APIView):
             return Response({'Message' : 'Data Not Found',"status":status.HTTP_404_NOT_FOUND})
         
         serializer = UserProfileSerializer(user_profile, data=request.data)
-        print('Request Data : ',request.data)
+        # print('Request Data : ',request.data)
         if serializer.is_valid():
             serializer.save()
             user_profile.is_profile_completed = True

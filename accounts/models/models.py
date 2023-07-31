@@ -37,11 +37,11 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser,PermissionsMixin):
 
-    STUDENT = 'student'
-    COUNSELOR = 'academic_counselor'
+    STUDENT     = 'student'
+    COUNSELOR   = 'academic_counselor'
     COORDINATOR = 'review_coordinator'
-    ADMIN = 'brototype_admin'
-    SUPERUSER = 'super_user'
+    ADMIN       = 'brototype_admin'
+    SUPERUSER   = 'super_user'
 
     ROLE_CHOICES = (
         (STUDENT, 'Student'),
@@ -65,7 +65,6 @@ class User(AbstractBaseUser,PermissionsMixin):
     is_profile_completed = models.BooleanField(default=False,blank=True)
 
     USERNAME_FIELD  = 'email'
-
     objects = UserManager()
 
     def __str__(self):
@@ -74,8 +73,8 @@ class User(AbstractBaseUser,PermissionsMixin):
 
 
 class Badges(models.Model):
-    name = models.CharField(max_length=50)
-    icon = models.ImageField(upload_to='badge-icons',null=True)
+    name        = models.CharField(max_length=50)
+    icon        = models.ImageField(upload_to='badge-icons',null=True)
     description = models.TextField()
 
     class Meta:
@@ -93,8 +92,8 @@ class Hub(models.Model):
     
 
 class Batch(models.Model):
-    hub = models.ForeignKey(Hub,on_delete=models.CASCADE)
-    number = models.PositiveIntegerField(unique=True)
+    hub        = models.ForeignKey(Hub,on_delete=models.CASCADE)
+    number     = models.PositiveIntegerField(unique=True)
     batch_name = models.CharField(null=True,blank=True)
 
     def save(self, *args, **kwargs):

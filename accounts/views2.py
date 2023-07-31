@@ -1,11 +1,12 @@
 from .models.models2 import Follow,Project,Skill,SocialMedia,UserSocialMediaAccounts,EducationCategory,UserEducation,WorkExperience
 from .models import UserProfile
-from .serializers.serializers2 import SkillSerializer,SocialMediaSerializer,ProjectSerializer,UserSocialMediaAccountsSerializer,UserEducationSerializer,WorkExperienceSerializer
+from .serializers.serializers2 import SkillSerializer,SocialMediaSerializer,ProjectSerializer,UserSocialMediaAccountsSerializer,\
+UserEducationSerializer,WorkExperienceSerializer,EducationCategorySerializer
 from .serializers.serializers import UserViewSerializer,UserProfileSerializer
 from rest_framework.generics import ListAPIView,ListCreateAPIView
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 class SkillView(ListAPIView):
     serializer_class = SkillSerializer
@@ -16,7 +17,7 @@ class SkillView(ListAPIView):
         if skill_id:
             try:
                 skill = Skill.objects.get(pk=skill_id)
-                queryset = [skill]  # Convert the single skill to a list
+                queryset = [skill] 
             except Skill.DoesNotExist:
                 queryset = Skill.objects.none()
         else:
@@ -62,12 +63,16 @@ class UserSocialMediaAccountsView(ListAPIView):
             queryset = []
         return queryset
 
+class EducationCategoriesView(ListAPIView):
+    serializer_class = EducationCategorySerializer
+    queryset         = EducationCategory.objects.all()
+
 class UserEducationView(ListAPIView):
     serializer_class = UserEducationSerializer
     def get_queryset(self):
         user_id = self.request.query_params.get('user_id')
         if user_id:
-            queryset = UserEducation.objects.filter(user__id=user_id)
+            queryset = UserEducation.objects.filter(user__id=user_id).order_by('category__id')
         else:
             queryset = []
         return queryset
@@ -82,15 +87,12 @@ class WorkExperienceView(ListAPIView):
             queryset = []
         return queryset
     
-class ProjectView(ListCreateAPIView):
+class ProjectViewSet(ModelViewSet):
     serializer_class = ProjectSerializer
+
     def get_queryset(self):
-        user_id = self.request.query_params.get('user_id')
-        if user_id:
-            queryset = Project.objects.filter(user_id=user_id)
-        else:
-            queryset = Project.objects.all()
-        return queryset
+        user_id = self.kwargs['user_id']
+        return Project.objects.filter(user__id=user_id)
     
 class SocialMediaView(ListAPIView):
     queryset = SocialMedia.objects.all()

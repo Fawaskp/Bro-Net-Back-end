@@ -5,14 +5,9 @@ from .models import User
 
 def authenticate_request(request):
     auth_header = request.headers.get('Authorization')
-    try:
-        role = json.loads(request.body.decode('utf-8')).get('role')
-    except:
-        pass
-
+    # print('Auth Header :: ',auth_header)
     if not auth_header:
         return None
-
     if not auth_header.startswith('Bearer '):
         return None
 

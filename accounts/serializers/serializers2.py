@@ -1,12 +1,10 @@
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.serializers import ModelSerializer
-from ..models.models2 import Follow,Project,Skill,SocialMedia,UserSocialMediaAccounts,EducationCategory,UserEducation,WorkExperience
+from ..models.models2 import Project,Skill,SocialMedia,UserSocialMediaAccounts,EducationCategory,UserEducation,WorkExperience
 
 '''
 Serializers: 
 
 UserSocialMediaAccounts
-Follow
 Project
 Skill
 SocialMedia
@@ -14,6 +12,13 @@ EducationCategory
 UserEducation
 WorkExperience
 '''
+
+# class ProjectSerializer(ModelSerializer):
+#     skills_used = SkillSerializer(many=True)
+#     class Meta:
+#         model = SocialMedia
+#         fields = '__all__'
+
 
 class SocialMediaSerializer(ModelSerializer):
     class Meta:
@@ -34,12 +39,6 @@ class SkillSerializer(ModelSerializer):
 class ProjectSerializer(ModelSerializer):
     skills_used = SkillSerializer(many=True)
     class Meta:
-        model = SocialMedia
-        fields = '__all__'
-
-class ProjectSerializer(ModelSerializer):
-    skills_used = SkillSerializer(many=True)
-    class Meta:
         model = Project
         fields = '__all__'
 
@@ -50,7 +49,7 @@ class EducationCategorySerializer(ModelSerializer):
 
 
 class UserEducationSerializer(ModelSerializer):
-    category = EducationCategory()
+    category = EducationCategorySerializer()
     class Meta:
         model = UserEducation
         fields = '__all__'
