@@ -1,4 +1,5 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from ..models.models2 import Project,Skill,SocialMedia,UserSocialMediaAccounts,EducationCategory,UserEducation,WorkExperience
 
 '''
@@ -42,6 +43,11 @@ class ProjectSerializer(ModelSerializer):
         model = Project
         fields = '__all__'
 
+class WorkExperienceSerializer(ModelSerializer):
+    class Meta:
+        model = WorkExperience
+        fields = '__all__'
+
 class EducationCategorySerializer(ModelSerializer):
     class Meta:
         model = EducationCategory
@@ -52,9 +58,4 @@ class UserEducationSerializer(ModelSerializer):
     category = EducationCategorySerializer()
     class Meta:
         model = UserEducation
-        fields = '__all__'
-
-class WorkExperienceSerializer(ModelSerializer):
-    class Meta:
-        model = WorkExperience
         fields = '__all__'

@@ -1,9 +1,9 @@
 from django.urls import path
-from .viewslogin import LoginWithSocialMedia,LoginWithEmail,token,check_username,is_user_auth,is_su_auth
+from .login_views import LoginWithSocialMedia,LoginWithEmail,token,check_username,is_user_auth,is_su_auth
 from .views import ViewUsers, ViewUserProfile,UserProfileDetail,\
 GetHubList,GetBatchList,GetStackList,UserDetail
-from .views2 import SkillView,SocialMediaView,AddSkill,ProjectViewSet,UserSocialMediaAccountsView,\
-UserEducationView,WorkExperienceView,EducationCategoriesView
+from .views2 import SkillView,SocialMediaView,SkillDetail,ProjectViewSet,UserSocialMediaAccountsView,\
+UserEducationView,UserEducationDetail,WorkExperienceView,EducationCategoriesView
 
 
 urlpatterns = [
@@ -19,12 +19,13 @@ urlpatterns = [
     path('stack',GetStackList.as_view()),
     
     path('skill',SkillView.as_view()),
-    path('add-skill/<int:id>/',AddSkill.as_view()),
+    path('user-skill-detail/<int:id>/',SkillDetail.as_view()),
     path('project/<int:user_id>/',ProjectViewSet.as_view({'get':'list'})),
     path('social-media',SocialMediaView.as_view()),
     path('user-social-media',UserSocialMediaAccountsView.as_view()),
     path('education-categories',EducationCategoriesView.as_view()),
     path('user-education',UserEducationView.as_view()),
+    path('user-education-detail/<int:id>/',UserEducationDetail.as_view()),
     path('user-work-experience',WorkExperienceView.as_view()),
 
     path('token/',token),

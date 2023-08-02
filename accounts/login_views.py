@@ -9,7 +9,15 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .helpers import authenticate_user
 import re
-import json
+
+'''
+check-username
+token
+is_user_auth
+is_user_auth
+LoginWithEmail
+LoginWithSocialMedia
+'''
 
 @api_view(['POST'])
 @csrf_exempt
@@ -77,9 +85,9 @@ class LoginWithEmail(APIView):
         
         email = login_instance.email
         elapsed_minutes = login_instance.get_time_elapsed()
+
         if elapsed_minutes <= 5:
             email_exist = User.objects.filter(email=email).exists()
-            
             if not email_exist:
                 username = email.split('@')[0]
                 user = User.objects.create_user(email=email,password=email,username=username)

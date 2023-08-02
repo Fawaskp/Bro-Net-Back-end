@@ -7,6 +7,18 @@ from .serializers.serializers import UserViewSerializer, UserDetailSerializer,Us
 HubSerializer,BatchSerializer, StackSerializer
 from .permission import IsAuthenticatedWithToken
 
+
+'''
+ViewUsers
+UserDetail
+ViewUserProfile
+UserProfileDetail
+
+GetStackList
+GetHubList
+GetBatchList
+'''
+
 class ViewUsers(ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserViewSerializer

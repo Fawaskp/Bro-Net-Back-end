@@ -48,7 +48,7 @@ class EducationCategory(models.Model):
     
 
 class UserEducation(models.Model):
-    category    = models.ForeignKey(EducationCategory,on_delete=models.SET_NULL,null=True)
+    category    = models.ForeignKey(EducationCategory,on_delete=models.SET_NULL,null=True,blank=True)
     user        = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
     institution = models.CharField(max_length=100)
     course      = models.CharField(max_length=100,null=True)

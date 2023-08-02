@@ -28,3 +28,4 @@ class IsAuthenticatedWithToken(BasePermission):
     def has_permission(self, request, view):
         jwt_payload = authenticate_request(request)
         return jwt_payload is not None
+    
