@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer,SerializerMethodField
 from ..models import User,UserProfile,Hub,Batch,Stack
 from .serializers2 import SkillSerializer
 '''
@@ -29,6 +29,7 @@ class StackSerializer(ModelSerializer):
         model = Stack
         fields = '__all__'
 
+
 class UserViewSerializer(ModelSerializer):
     class Meta:
         model = User
@@ -52,3 +53,20 @@ class UserProfileSerializer(ModelSerializer):
         model = UserProfile
         fields = '__all__'
         
+class UserSearchSerializer(ModelSerializer):
+    profile = SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ('fullname', 'username','email','profile')
+
+    def get_profile(self, user):
+        try:
+            profile_instance = UserProfile.objects.get(user=user)
+            profile_data = {}
+            profile_data.update(batch = UserProfileSerializer(profile_instance).data.get('batch').get('batch_name'))
+            profile_data.update(image = UserProfileSerializer(profile_instance).data.get('profile_image'))
+            return profile_data
+        except UserProfile.DoesNotExist:
+            return None
+        except :
+            return None

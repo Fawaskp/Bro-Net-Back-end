@@ -38,6 +38,17 @@ def check_username(request):
     else:
         return JsonResponse(data={'detail':"is not allowed"},status=405)
 
+
+@api_view(['GET'])
+def get_user_id_by_username(request,username):
+    try:
+        user = User.objects.get(username=username)
+    except:
+        return JsonResponse(data={'message':'user not found','status':404})
+    else:
+        return JsonResponse(data={'message':'success','id':user.id,'status':200})
+
+
 @api_view(['POST'])
 @csrf_exempt
 def token(request):

@@ -3,10 +3,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from .models import User,UserProfile,Hub,Batch,Stack
-from .serializers.serializers import UserViewSerializer, UserDetailSerializer,UserProfileSerializer,\
+from .serializers.serializers import UserSearchSerializer, UserDetailSerializer,UserProfileSerializer,\
 HubSerializer,BatchSerializer, StackSerializer
 from .permission import IsAuthenticatedWithToken
-
+from rest_framework import filters
 
 '''
 ViewUsers
@@ -19,9 +19,16 @@ GetHubList
 GetBatchList
 '''
 
-class ViewUsers(ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserViewSerializer
+class SearchUser(ListAPIView):
+    serializer_class = UserSearchSerializer
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+    search_fields = ['fullname', 'username', 'email']
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        if user_id is not None:
+            queryset = User.objects.exclude(id=user_id)
+        return queryset
 
 class UserDetail(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()

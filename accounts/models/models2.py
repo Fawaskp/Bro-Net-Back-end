@@ -1,10 +1,22 @@
 from django.db import models
 
+'''
+Social-Media
+Uesr-Social-Media
+Skill
+Project
+Education-Category
+User-Education
+WorkExperience
+Follow
+'''
+
 class SocialMedia(models.Model):
     icon = models.ImageField(upload_to='social-media-icons',blank=True)
     name = models.CharField(max_length=20,unique=True,blank=True)
 
     class Meta:
+        ordering = ['id']
         verbose_name_plural = ("Socila Media")
 
     def __str__(self) -> str:
@@ -24,6 +36,9 @@ class Skill(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+    class Meta:
+        ordering = ['id']
 
 class Project(models.Model):
     user            = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
@@ -35,6 +50,7 @@ class Project(models.Model):
     skills_used     = models.ManyToManyField(Skill)
 
     class Meta:
+        ordering = ['id']
         verbose_name_plural = ("Projects")
 
     def __str__(self):
@@ -56,6 +72,9 @@ class UserEducation(models.Model):
 
     def __str__(self) -> str:
         return self.category.name +' of ' + self.user.username
+    
+    class Meta:
+        ordering = ['id']
 
 class WorkExperience(models.Model):
     user     = models.ForeignKey("accounts.User",on_delete=models.CASCADE)

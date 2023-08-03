@@ -14,29 +14,49 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from accounts.helpers import email_validator, create_jwt_pair_tokens
 from django.contrib.auth import authenticate
+from rest_framework import filters
+from rest_framework.pagination import PageNumberPagination
+
+class DefaultPagination(PageNumberPagination):
+    page_size = 3
 
 
 class StudetsView(ListCreateAPIView):
     queryset = User.objects.filter(role="student")
     serializer_class = CombinedUserSerializer
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter]  
+    ordering_fields = ['fullname', 'username', 'email', 'dob']
+    search_fields = ['fullname', 'username', 'email']
+    pagination_class = DefaultPagination
+
 
 class CouncellorsView(ListCreateAPIView):
     queryset = User.objects.filter(role="academic_counselor")
     serializer_class = CombinedUserSerializer
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+    search_fields = ['fullname', 'username', 'email']
+    ordering_fields = ['fullname', 'username', 'email', 'dob']
+    pagination_class = DefaultPagination
+
 
 class AdminsView(ListCreateAPIView):
     queryset = User.objects.filter(role="brototype_admin")
     serializer_class = CombinedUserSerializer
+    filter_backends = [filters.OrderingFilter]
+    pagination_class = DefaultPagination
 
 
 class CoOrdinatorsView(ListCreateAPIView):
     queryset = User.objects.filter(role="review_coordinator")
     serializer_class = CombinedUserSerializer
+    filter_backends = [filters.OrderingFilter]
+    pagination_class = DefaultPagination
 
 
 class SkillsView(ListCreateAPIView):
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
+    pagination_class = DefaultPagination
 
 
 class SocialMediaView(ListCreateAPIView):
@@ -59,11 +79,13 @@ class SocialMediaDetail(RetrieveUpdateDestroyAPIView):
 class BadgesView(ListCreateAPIView):
     queryset = Badges.objects.all()
     serializer_class = BadgeSerializer
+    pagination_class = DefaultPagination
 
 
 class ProjectView(ListCreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    pagination_class = DefaultPagination
 
 
 @api_view(["PUT"])

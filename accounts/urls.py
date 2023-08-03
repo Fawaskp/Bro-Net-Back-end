@@ -1,13 +1,13 @@
 from django.urls import path
-from .login_views import LoginWithSocialMedia,LoginWithEmail,token,check_username,is_user_auth,is_su_auth
-from .views import ViewUsers, ViewUserProfile,UserProfileDetail,\
+from .views_login import LoginWithSocialMedia,LoginWithEmail,token,check_username,is_user_auth,is_su_auth,get_user_id_by_username
+from .views import SearchUser, ViewUserProfile,UserProfileDetail,\
 GetHubList,GetBatchList,GetStackList,UserDetail
 from .views2 import SkillView,SocialMediaView,SkillDetail,ProjectViewSet,UserSocialMediaAccountsView,\
 UserEducationView,UserEducationDetail,WorkExperienceView,EducationCategoriesView
 
 
 urlpatterns = [
-    path('',ViewUsers.as_view()),
+    path('search/<int:user_id>/',SearchUser.as_view()),
     path('profile/',ViewUserProfile.as_view()),
     path('login/email/',LoginWithEmail.as_view()),
     path('login/social-media/',LoginWithSocialMedia.as_view()),
@@ -30,6 +30,7 @@ urlpatterns = [
 
     path('token/',token),
     path('check-username',check_username),
+    path('get-user-id/<str:username>/',get_user_id_by_username),
     path('is-user-auth',is_user_auth),
     path('is-su-auth',is_su_auth),
 ]
