@@ -3,7 +3,7 @@ from .views_login import LoginWithSocialMedia,LoginWithEmail,token,check_usernam
 from .views import SearchUser, ViewUserProfile,UserProfileDetail,\
 GetHubList,GetBatchList,GetStackList,UserDetail
 from .views2 import SkillView,SocialMediaView,SkillDetail,ProjectViewSet,UserSocialMediaAccountsView,\
-UserEducationView,UserEducationDetail,WorkExperienceView,EducationCategoriesView
+UserEducationView,UserEducationDetail,WorkExperienceView,EducationCategoriesView,FollowView
 
 
 urlpatterns = [
@@ -33,4 +33,5 @@ urlpatterns = [
     path('get-user-id/<str:username>/',get_user_id_by_username),
     path('is-user-auth',is_user_auth),
     path('is-su-auth',is_su_auth),
+    path('follow/<int:user1>/<int:user2>/',FollowView.as_view()),
 ]

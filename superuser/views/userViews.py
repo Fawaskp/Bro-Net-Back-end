@@ -1,5 +1,5 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from accounts.models import User, Badges
+from accounts.models import User, Badges, Hub, Batch
 from accounts.models.models2 import Skill, SocialMedia, Project
 from ..serializers.userSerializer import (
     CombinedUserSerializer,
@@ -7,6 +7,8 @@ from ..serializers.userSerializer import (
     SocialMediaSerializer,
     BadgeSerializer,
     ProjectSerializer,
+    HubSerializer,
+    BatchSerializer
 )
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
@@ -16,6 +18,7 @@ from accounts.helpers import email_validator, create_jwt_pair_tokens
 from django.contrib.auth import authenticate
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
+
 
 class DefaultPagination(PageNumberPagination):
     page_size = 3
@@ -58,6 +61,16 @@ class SkillsView(ListCreateAPIView):
     serializer_class = SkillSerializer
     pagination_class = DefaultPagination
 
+class HubsView(ListCreateAPIView):
+    queryset = Hub.objects.all()
+    serializer_class = HubSerializer
+    pagination_class = DefaultPagination
+
+class BatchesView(ListCreateAPIView):
+    queryset = Batch.objects.all()
+    serializer_class = BatchSerializer
+    pagination_class = DefaultPagination
+
 
 class SocialMediaView(ListCreateAPIView):
     queryset = SocialMedia.objects.all()
@@ -67,6 +80,18 @@ class SocialMediaView(ListCreateAPIView):
 class SkillsViewDetail(RetrieveUpdateDestroyAPIView):
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
+    lookup_field = "id"
+
+
+class HubViewDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Hub.objects.all()
+    serializer_class = HubSerializer
+    lookup_field = "id"
+
+
+class BatchViewDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Batch.objects.all()
+    serializer_class = BatchSerializer
     lookup_field = "id"
 
 
@@ -101,6 +126,7 @@ def block_user(request, id):
         user.save()
     return Response(data={"message": "Blocked User successfully"})
 
+
 @api_view(["PUT"])
 def unblock_user(request, id):
     try:
@@ -113,6 +139,7 @@ def unblock_user(request, id):
         user.is_active = True
         user.save()
     return Response(data={"message": "un Blocked User successfully"})
+
 
 @api_view(["POST"])
 @csrf_exempt

@@ -3,6 +3,16 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils import timezone
 from .models2 import SocialMedia,Skill
 
+'''
+User
+Badges
+Hub
+Batch
+Stack
+UserProfile
+LogginWtithEmailData
+'''
+
 class UserManager(BaseUserManager):
 
     def create_user(self,email, password=None , **extra_fields):

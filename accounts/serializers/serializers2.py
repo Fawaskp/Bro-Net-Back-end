@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from rest_framework import serializers
-from ..models.models2 import Project,Skill,SocialMedia,UserSocialMediaAccounts,EducationCategory,UserEducation,WorkExperience
+from ..models.models2 import (
+    Project,Skill,SocialMedia,UserSocialMediaAccounts,EducationCategory,UserEducation,WorkExperience,Follow
+)
 
 '''
 Serializers: 
@@ -58,4 +59,9 @@ class UserEducationSerializer(ModelSerializer):
     category = EducationCategorySerializer()
     class Meta:
         model = UserEducation
+        fields = '__all__'
+
+class FollowSerializer(ModelSerializer):
+    class Meta:
+        model = Follow
         fields = '__all__'

@@ -8,7 +8,7 @@ from .models.models2 import (
     UserEducation,
     WorkExperience,
 )
-from .models import UserProfile
+from .models import UserProfile,User
 from .serializers.serializers2 import (
     SkillSerializer,
     SocialMediaSerializer,
@@ -25,8 +25,22 @@ from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from django.http import JsonResponse
+
+"""
+SkillView
+SkillDetail
+UserSocialMediaAccountsView
+EducationCategoriesView
+UserEducationView
+UserEducationDetail
+WorkExperienceView
+ProjectViewSet
+SocialMediaView
+"""
 
 
 class SkillView(ListAPIView):
@@ -45,6 +59,28 @@ class SkillView(ListAPIView):
             queryset = Skill.objects.all()
 
         return queryset
+
+class FollowView(APIView):
+    def get(self, request, user1, user2):
+        instance = Follow.objects.filter(following_user__id=user1, followed_user__id=user2)
+        is_followed = True if instance.exists() else False
+        status_code = 200 if is_followed else 404
+        return Response(data={'is_followed': is_followed}, status=status_code)
+
+    def post(self, request, user1, user2):
+        try:
+            following_user = User.objects.get(id=user1)
+            followed_user = User.objects.get(id=user2)
+            Follow.objects.create(following_user=following_user, followed_user=followed_user)
+        except:
+            return Response(status=400)
+        return Response(status=201)
+
+    def delete(self, request, user1, user2):
+        instance = Follow.objects.filter(following_user__id=user1, followed_user__id=user2)
+        if instance.exists():
+            instance.delete()
+            return Response(status=204)
 
 
 class SkillDetail(APIView):

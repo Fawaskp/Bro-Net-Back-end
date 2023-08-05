@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from accounts.models import UserProfile,User,Badges
+from accounts.models import UserProfile,User,Badges,Hub,Batch
 from accounts.models.models2 import Skill,SocialMedia,Project
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -24,6 +24,16 @@ class CombinedUserSerializer(serializers.ModelSerializer):
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
+        fields = '__all__'
+
+class HubSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hub
+        fields = '__all__'
+
+class BatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Batch
         fields = '__all__'
 
 class SocialMediaSerializer(serializers.ModelSerializer):
