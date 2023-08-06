@@ -124,8 +124,11 @@ def email_sender(email: str, link: str) -> bool:
             <body>
                 <div class="container">
                     <h1>Hi from Bronet</h1>
-                    <p>Follow this link to sign in to Bronet:</p>
+                    <p>Click Sign in</p>
                     <a class="link-button" href="{link}">Sign In</a>
+                    <p><strong>OR</strong></p>
+                    <p>Follow this link to sign in to Bronet:</p>
+                    <a href="{link}">{link}</a>
                 </div>
             </body>
         </html>

@@ -29,7 +29,7 @@ urlpatterns = [
     path('user-work-experience',WorkExperienceView.as_view()),
 
     path('token/',token),
-    path('check-username',check_username),
+    path('check-username/<str:username>/',check_username),
     path('get-user-id/<str:username>/',get_user_id_by_username),
     path('is-user-auth',is_user_auth),
     path('is-su-auth',is_su_auth),

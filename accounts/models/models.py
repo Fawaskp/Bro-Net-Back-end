@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
-from .models2 import SocialMedia,Skill
+from .models2 import Skill
+from datetime import timedelta,date
+from django.core.exceptions import ValidationError
 
 '''
 User
@@ -75,10 +77,17 @@ class User(AbstractBaseUser,PermissionsMixin):
     USERNAME_FIELD  = 'email'
     objects = UserManager()
 
+    def save(self, *args, **kwargs):
+        self.username = self.username.lower()
+        if self.dob > date.today() - timedelta(days=6205):
+             raise ValidationError('You should be at least 17 years old to register.')
+        print('Self.Dob  = ',self.dob)
+        print('Date today : ',date.today())
+        print('Deff : ', date.today() - timedelta(days=6205))
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username
-    
 
 
 class Badges(models.Model):
