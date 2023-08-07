@@ -42,7 +42,6 @@ ProjectViewSet
 SocialMediaView
 """
 
-
 class SkillView(ListAPIView):
     serializer_class = SkillSerializer
 

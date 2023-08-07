@@ -1,6 +1,6 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from accounts.models import User, Badges, Hub, Batch
-from accounts.models.models2 import Skill, SocialMedia, Project
+from accounts.models.models2 import Skill, SocialMedia, Project, EducationCategory
 from ..serializers.userSerializer import (
     CombinedUserSerializer,
     SkillSerializer,
@@ -8,7 +8,8 @@ from ..serializers.userSerializer import (
     BadgeSerializer,
     ProjectSerializer,
     HubSerializer,
-    BatchSerializer
+    BatchSerializer,
+    EduCategorySerializer
 )
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
@@ -66,6 +67,11 @@ class HubsView(ListCreateAPIView):
     serializer_class = HubSerializer
     pagination_class = DefaultPagination
 
+class EduCategoriesView(ListCreateAPIView):
+    queryset = EducationCategory.objects.all()
+    serializer_class = EduCategorySerializer
+    pagination_class = DefaultPagination
+
 class BatchesView(ListCreateAPIView):
     queryset = Batch.objects.all()
     serializer_class = BatchSerializer
@@ -75,6 +81,13 @@ class BatchesView(ListCreateAPIView):
 class SocialMediaView(ListCreateAPIView):
     queryset = SocialMedia.objects.all()
     serializer_class = SocialMediaSerializer
+
+
+class EduCategoryDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = EducationCategory.objects.all()
+    serializer_class = EduCategorySerializer
+    pagination_class = DefaultPagination
+    lookup_field = 'id'
 
 
 class SkillsViewDetail(RetrieveUpdateDestroyAPIView):

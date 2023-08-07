@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer,SerializerMethodField
-from ..models import User,UserProfile,Hub,Batch,Stack
+from ..models import User,UserProfile,Hub,Batch,Stack,Dos,Donts
 from .serializers2 import SkillSerializer
 '''
 Serializers: 
@@ -70,3 +70,13 @@ class UserSearchSerializer(ModelSerializer):
             return None
         except :
             return None
+
+class DosSerializer(ModelSerializer):
+    class Meta:
+        model = Dos
+        fields = '__all__'
+
+class DontsSerializer(ModelSerializer):
+    class Meta:
+        model = Donts
+        fields = '__all__'

@@ -1,10 +1,10 @@
-from rest_framework.generics import ListAPIView,CreateAPIView,RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListAPIView,ListCreateAPIView,CreateAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .models import User,UserProfile,Hub,Batch,Stack
+from .models import User,UserProfile,Hub,Batch,Stack,Dos,Donts
 from .serializers.serializers import UserSearchSerializer, UserDetailSerializer,UserProfileSerializer,\
-HubSerializer,BatchSerializer, StackSerializer
+HubSerializer,BatchSerializer, StackSerializer,DosSerializer,DontsSerializer
 from .permission import IsAuthenticatedWithToken
 from rest_framework import filters
 
@@ -17,6 +17,8 @@ UserProfileDetail
 GetStackList
 GetHubList
 GetBatchList
+
+Dos and Don'ts
 '''
 
 class SearchUser(ListAPIView):
@@ -84,5 +86,29 @@ class GetBatchList(ListAPIView):
             hub_instance = Hub.objects.get(id=hub_id)
             return Batch.objects.filter(hub=hub_instance)
         return {}
-    
 
+class DosView(ListCreateAPIView):
+    serializer_class = DosSerializer
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        if user_id and Dos.objects.filter(user_id=user_id).exists() :
+            return Dos.objects.filter(user_id = user_id)
+        return []
+
+class DontsView(ListCreateAPIView):
+    serializer_class = DontsSerializer
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        if user_id and Donts.objects.filter(user_id=user_id).exists() :
+            return Donts.objects.filter(user_id = user_id)
+        return []
+    
+class DosDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Dos.objects.all()
+    serializer_class = DosSerializer
+    lookup_field = 'id'
+
+class DontsDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Donts.objects.all()
+    serializer_class = DontsSerializer
+    lookup_field = 'id'

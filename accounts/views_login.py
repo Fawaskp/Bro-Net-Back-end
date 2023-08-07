@@ -28,26 +28,20 @@ block_message = "You can't login, your account is blocked"
 
 @api_view(["GET"])
 @csrf_exempt
-def check_username(request,username):
-        if username:
-            regex_pattern = r"^[a-zA-Z0-9_.-]+$"
-            if not re.match(regex_pattern, username):
-                return Response(
-                    data={"message": "Invalid username format", "status": 400}
-                )
-            is_exist = User.objects.filter(username=username).exists()
-            if is_exist:
-                return JsonResponse(
-                    data={"message": "given username already exist", "status": 409}
-                )
-            else:
-                return JsonResponse(
-                    data={"message": "username is acceptable"}, status=202
-                )
-        else:
+def check_username(request, username):
+    if username:
+        regex_pattern = r"^[a-zA-Z0-9_.-]+$"
+        if not re.match(regex_pattern, username):
+            return Response(data={"message": "Invalid username format", "status": 400})
+        is_exist = User.objects.filter(username=username).exists()
+        if is_exist:
             return JsonResponse(
-                data={"message": "username is important", "status": 400}
+                data={"message": "given username already exist", "status": 409}
             )
+        else:
+            return JsonResponse(data={"message": "username is acceptable"}, status=202)
+    else:
+        return JsonResponse(data={"message": "username is important", "status": 400})
 
 
 @api_view(["GET"])

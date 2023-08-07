@@ -91,3 +91,21 @@ class Follow(models.Model):
 
     def __str__(self) -> str:
         return f"{self.following_user} followed {self.followed_user}"
+
+
+class Dos(models.Model):
+    user  = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
+    title = models.CharField(max_length=50,null=True)
+    do    = models.TextField()
+
+    def __str__(self) -> str:
+        return f"Do of {self.user}" 
+
+
+class Donts(models.Model):
+    user  = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
+    title = models.CharField(max_length=50,null=True)
+    dont = models.TextField()
+
+    def __str__(self) -> str:
+        return f"Dont's of {self.user}" 

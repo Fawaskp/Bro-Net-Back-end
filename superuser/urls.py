@@ -4,10 +4,12 @@ from .views.userViews import (
     CouncellorsView,
     AdminsView,
     CoOrdinatorsView,
+    EduCategoriesView,
     SkillsView,
     HubsView,
     BatchesView,
     SocialMediaView,
+    EduCategoryDetailView,
     SkillsViewDetail,
     HubViewDetail,
     BatchViewDetail,
@@ -20,6 +22,7 @@ from .views.userViews import (
 )
 
 urlpatterns = [
+
     path("login", admin_login),
     path("students/", StudetsView.as_view()),
     path("councellors/", CouncellorsView.as_view()),
@@ -30,11 +33,13 @@ urlpatterns = [
 
     path("skills/", SkillsView.as_view()),
     path("hubs/", HubsView.as_view()),
+    path("education-categories/", EduCategoriesView.as_view()),
     path("batches/", BatchesView.as_view()),
     path("social-media/", SocialMediaView.as_view()),
     path("badges/", BadgesView.as_view()),
     path("projects/", ProjectView.as_view()),
 
+    path("education-categories/<int:id>/", EduCategoryDetailView.as_view()),
     path("skill/<int:id>/", SkillsViewDetail.as_view()),
     path("hub/<int:id>/", HubViewDetail.as_view()),
     path("batch/<int:id>/", BatchViewDetail.as_view()),
