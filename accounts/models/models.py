@@ -79,11 +79,11 @@ class User(AbstractBaseUser,PermissionsMixin):
 
     def save(self, *args, **kwargs):
         self.username = self.username.lower()
-        if self.dob > date.today() - timedelta(days=6205):
-             raise ValidationError('You should be at least 17 years old to register.')
-        print('Self.Dob  = ',self.dob)
-        print('Date today : ',date.today())
-        print('Deff : ', date.today() - timedelta(days=6205))
+        # if self.dob and self.dob > date.today() - timedelta(days=6205):
+        #      raise ValidationError('You should be at least 17 years old to register.')
+        # print('Self.Dob  = ',self.dob)
+        # print('Date today : ',date.today())
+        # print('Deff : ', date.today() - timedelta(days=6205))
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -97,6 +97,7 @@ class Badges(models.Model):
 
     class Meta:
         verbose_name_plural = 'Badges'
+
 
     def __str__(self):
         return self.name

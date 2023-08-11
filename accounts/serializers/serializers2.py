@@ -33,6 +33,11 @@ class UserSocialMediaAccountsSerializer(ModelSerializer):
         model = UserSocialMediaAccounts
         fields = '__all__'
 
+class UserSocialMediaAccountsUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = UserSocialMediaAccounts
+        fields = '__all__'
+
 class SkillSerializer(ModelSerializer):
     class Meta:
         model = Skill

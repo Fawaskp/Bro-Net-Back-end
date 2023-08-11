@@ -23,9 +23,12 @@ class SocialMedia(models.Model):
         return self.name
 
 class UserSocialMediaAccounts(models.Model):
-    social_media = models.ForeignKey(SocialMedia,on_delete=models.CASCADE)
-    user         = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
-    url          = models.CharField(max_length=80)
+    social_media = models.ForeignKey(SocialMedia,on_delete=models.CASCADE,blank=True)
+    user         = models.ForeignKey("accounts.User",on_delete=models.CASCADE,blank=True)
+    url          = models.CharField(max_length=80,blank=True)
+
+    class Meta:
+        unique_together = ('social_media', 'user')
 
     def __str__(self) -> str:
         return f"{self.user.username} ({self.social_media.name})"
@@ -55,6 +58,12 @@ class Project(models.Model):
 
     def __str__(self):
         return f"{self.name} by {self.user.fullname}"
+
+
+class ProjectAdditionalSkills(models.Model):
+    project = models.ForeignKey(Project,on_delete=models.CASCADE)
+    skill_name = models.CharField(max_length=50)
+
 
 class EducationCategory(models.Model):
     name = models.CharField(max_length=60)
