@@ -19,6 +19,7 @@ from .serializers.serializers2 import (
     WorkExperienceSerializer,
     EducationCategorySerializer,
 )
+from rest_framework.decorators import api_view
 from rest_framework.generics import (
     ListAPIView,
     ListCreateAPIView,
@@ -31,6 +32,7 @@ from rest_framework.viewsets import ModelViewSet
 """
 SkillView
 SkillDetail
+FollowView
 UserSocialMediaAccountsView
 UserSocialMediaAccountsDetail
 EducationCategoriesView
@@ -67,6 +69,7 @@ class FollowView(APIView):
         )
         is_followed = True if instance.exists() else False
         status_code = 200 if is_followed else 404
+        print('status == ',status_code)
         return Response(data={"is_followed": is_followed}, status=status_code)
 
     def post(self, request, user1, user2):
@@ -87,6 +90,7 @@ class FollowView(APIView):
         if instance.exists():
             instance.delete()
             return Response(status=204)
+
 
 
 class SkillDetail(APIView):

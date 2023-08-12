@@ -9,6 +9,8 @@ Education-Category
 User-Education
 WorkExperience
 Follow
+Dos
+Donts
 '''
 
 class SocialMedia(models.Model):
@@ -98,6 +100,9 @@ class Follow(models.Model):
     following_user = models.ForeignKey("accounts.User",on_delete=models.CASCADE,related_name='following_user_set')
     followed_user  = models.ForeignKey("accounts.User",on_delete=models.CASCADE,related_name='followed_user_set')
 
+    class Meta:
+        unique_together = ['following_user', 'followed_user']
+
     def __str__(self) -> str:
         return f"{self.following_user} followed {self.followed_user}"
 
@@ -114,7 +119,7 @@ class Dos(models.Model):
 class Donts(models.Model):
     user  = models.ForeignKey("accounts.User",on_delete=models.CASCADE)
     title = models.CharField(max_length=50,null=True)
-    dont = models.TextField()
+    dont  = models.TextField()
 
     def __str__(self) -> str:
         return f"Dont's of {self.user}" 

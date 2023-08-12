@@ -26,8 +26,6 @@ class Post(models.Model):
 class ImagePost(models.Model):
     post  = models.ForeignKey(Post,on_delete=models.CASCADE)
     image = models.ImageField(upload_to='image-post') 
-    class Meta:
-        ordering = ['-id']
 
 
 class VideoPost(models.Model):

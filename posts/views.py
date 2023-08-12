@@ -1,27 +1,51 @@
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView,ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import BannerSerializer
-from .models import Banner, Post, ImagePost
+from .serializers import BannerSerializer, PostSerializer
+from .models import Banner, Post, ImagePost, VideoPost
 from accounts.models import User
-from .serializers import ImagePostSerializer
-from accounts.serializers.serializers import UserViewSerializer
-from accounts.models import UserProfile
+from accounts.models.models2 import Follow
+
+"""
+BannerView
+GetAllPost
+PostImage
+PostVideo
+"""
+
 
 class BannerView(ListCreateAPIView):
     serializer_class = BannerSerializer
     queryset = Banner.objects.all()
 
 
+class GetAllPost(ListAPIView):
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs.get("user_id")
+        queryset = Post.objects.none()
+        try:
+            if user_id is not None:
+                user = User.objects.get(id=user_id)
+                followings = Follow.objects.filter(following_user=user)
+                for instance in followings:
+                    queryset = queryset | Post.objects.filter(
+                        user=instance.followed_user
+                    )
+                return queryset
+        except:
+            return []
+
+
 class PostImage(APIView):
     def post(self, request):
         user_id = request.data.get("user")
-        post_type = request.data.get("post-type")
         description = request.data.get("description")
         try:
             user_instance = User.objects.get(id=user_id)
             post_instance = Post.objects.create(
-                user=user_instance, type=post_type, description=description
+                user=user_instance, type="image", description=description
             )
         except:
             return Response(status=400, data={"message": "failed"})
@@ -37,29 +61,19 @@ class PostImage(APIView):
         return Response(status=200, data={"message": "sucess"})
 
 
-class GetPosts(ListCreateAPIView):
-    queryset = ImagePost.objects.all()
-    serializer_class = ImagePostSerializer
+class PostVideo(APIView):
+    def post(self, request):
+        user_id = request.data.get("user")
+        description = request.data.get("description")
+        try:
+            user_instance = User.objects.get(id=user_id)
+            post_instance = Post.objects.create(
+                user=user_instance, type="video", description=description
+            )
+        except:
+            return Response(status=400, data={"message": "failed"})
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        posts_dict = {} 
+            VideoPost.objects.create(post=post_instance, video=request.FILES)
+            return Response(status=400, data={"message": f"{e}"})
 
-        for post in queryset:
-            post_id = post.post.id
-            if post_id not in posts_dict:
-                posts_dict[post_id] = {
-                    "post": post_id,
-                    "images": [],
-                    "description":post.post.description,
-                    "user": {
-                        'fullname' : UserViewSerializer(post.post.user).data.get('fullname'),
-                        'profile_img' : UserProfile.objects.get(user=post.post.user).profile_image.url,
-                        'id' : UserViewSerializer(post.post.user).data.get('id'),
-                    }
-                }
-
-            posts_dict[post_id]["images"].append(post.image.url)
-
-        posts_list = list(posts_dict.values())
-        return Response(posts_list, status=200)
+        return Response(status=200, data={"message": "sucess"})
