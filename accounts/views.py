@@ -2,9 +2,9 @@ from rest_framework.generics import ListAPIView,ListCreateAPIView,CreateAPIView,
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .models import User,UserProfile,Hub,Batch,Stack,Dos,Donts
+from .models import User,UserProfile,Hub,Batch,Stack,Dos,Donts,Message
 from .serializers.serializers import UserSearchSerializer, UserDetailSerializer,UserProfileSerializer,\
-HubSerializer,BatchSerializer, StackSerializer,DosSerializer,DontsSerializer
+HubSerializer,BatchSerializer, StackSerializer,DosSerializer,DontsSerializer,MessageSerializer
 from .permission import IsAuthenticatedWithToken
 from rest_framework import filters
 
@@ -112,3 +112,17 @@ class DontsDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Donts.objects.all()
     serializer_class = DontsSerializer
     lookup_field = 'id'
+
+class PreviousMessagesView(ListAPIView):
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        user1 = int(self.kwargs['user1'])
+        user2 = int(self.kwargs['user2'])
+
+        thread_suffix = f"{user1}_{user2}" if user1 > user2 else f"{user2}_{user1}"
+        thread_name = 'chat_'+thread_suffix
+        queryset = Message.objects.filter(
+            thread_name=thread_name
+        )
+        return queryset

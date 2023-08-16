@@ -5,6 +5,7 @@ from .serializers import BannerSerializer, PostSerializer
 from .models import Banner, Post, ImagePost, VideoPost
 from accounts.models import User
 from accounts.models.models2 import Follow
+from rest_framework.decorators import api_view
 
 """
 BannerView
@@ -77,3 +78,14 @@ class PostVideo(APIView):
             return Response(status=400, data={"message": f"{e}"})
 
         return Response(status=200, data={"message": "sucess"})
+
+@api_view(['PUT','PATCH'])
+def like_post(request,id):
+    is_post_exist = Post.objects.filter(id=id)
+    if is_post_exist:
+        post_instance = Post.objects.get(id=id)
+        post_instance.like_count += 1
+        post_instance.save()
+        return Response(status=200)
+    else:
+        return Response(status=404,data={'message':'given post not found'})

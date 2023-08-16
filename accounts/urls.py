@@ -20,6 +20,7 @@ from .views import (
     DontsView,
     DosDetailView,
     DontsDetailView,
+    PreviousMessagesView,
 )
 from .views2 import (
     SkillView,
@@ -63,6 +64,7 @@ urlpatterns = [
     path("donts/<int:user_id>/", DontsView.as_view()),
     path("dos-detail/<int:id>/", DosDetailView.as_view()),
     path("donts-detail/<int:id>/", DontsDetailView.as_view()),
+    path("user-previous-chats/<int:user1>/<int:user2>/", PreviousMessagesView.as_view()),
 
     path("token/", token),
     path("check-username/<str:username>/", check_username),

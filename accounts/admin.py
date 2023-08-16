@@ -11,6 +11,7 @@ from .models.models2 import (
     WorkExperience,
     Dos,
     Donts,
+    Message,
 )
 
 admin.site.register(Skill)
@@ -31,3 +32,5 @@ admin.site.register(UserEducation)
 admin.site.register(WorkExperience)
 admin.site.register(Dos)
 admin.site.register(Donts)
+admin.site.register(Message)
+

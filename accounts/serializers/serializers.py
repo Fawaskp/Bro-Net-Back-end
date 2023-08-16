@@ -1,15 +1,18 @@
 from rest_framework.serializers import ModelSerializer,SerializerMethodField
-from ..models import User,UserProfile,Hub,Batch,Stack,Dos,Donts
+from ..models import User,UserProfile,Hub,Batch,Stack,Dos,Donts,Message
 from .serializers2 import SkillSerializer
 '''
 Serializers: 
 
-User
-UserDetail
-UserProfile
 Stack
 Hub
 Batch
+User
+UserDetail
+UserProfile
+UseSearch
+Dos
+Donts
 '''
 
 class HubSerializer(ModelSerializer):
@@ -41,7 +44,7 @@ class UserViewSerializer(ModelSerializer):
 class UserDetailSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['fullname','email','username','dob','is_verified','is_profile_completed']
+        fields = ['id','fullname','email','username','dob','is_verified','is_profile_completed']
 
 
 class UserProfileSerializer(ModelSerializer):
@@ -80,3 +83,13 @@ class DontsSerializer(ModelSerializer):
     class Meta:
         model = Donts
         fields = '__all__'
+
+class MessageSerializer(ModelSerializer):
+    sender_username = SerializerMethodField()
+
+    class Meta:
+        model = Message
+        fields = ['message','sender_username']
+
+    def get_sender_username(self,obj):
+        return obj.sender.username
