@@ -7,6 +7,8 @@ from .views_login import (
     is_user_auth,
     is_su_auth,
     get_user_id_by_username,
+    send_otp_for_change_mail,
+    verify_otp_for_change_mail,
 )
 from .views import (
     SearchUser,
@@ -71,5 +73,7 @@ urlpatterns = [
     path("get-user-id/<str:username>/", get_user_id_by_username),
     path("is-user-auth", is_user_auth),
     path("is-su-auth", is_su_auth),
+    path("otp-for-change-email", send_otp_for_change_mail),
+    path("verify-change-email-otp", verify_otp_for_change_mail),
     path("follow/<int:user1>/<int:user2>/", FollowView.as_view()),
 ]

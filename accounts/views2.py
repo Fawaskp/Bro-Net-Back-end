@@ -72,6 +72,7 @@ class FollowView(APIView):
         print('status == ',status_code)
         return Response(data={"is_followed": is_followed}, status=status_code)
 
+
     def post(self, request, user1, user2):
         try:
             following_user = User.objects.get(id=user1)
