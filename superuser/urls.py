@@ -16,6 +16,7 @@ from .views.userViews import (
     SocialMediaDetail,
     BadgesView,
     ProjectView,
+    AdminMessageView,
     admin_login,
     block_user,
     unblock_user,
@@ -38,6 +39,7 @@ urlpatterns = [
     path("social-media/", SocialMediaView.as_view()),
     path("badges/", BadgesView.as_view()),
     path("projects/", ProjectView.as_view()),
+    path("admin-messages/", AdminMessageView.as_view()),
 
     path("education-categories/<int:id>/", EduCategoryDetailView.as_view()),
     path("skill/<int:id>/", SkillsViewDetail.as_view()),

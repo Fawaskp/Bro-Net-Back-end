@@ -9,7 +9,8 @@ from ..serializers.userSerializer import (
     ProjectSerializer,
     HubSerializer,
     BatchSerializer,
-    EduCategorySerializer
+    EduCategorySerializer,
+    AdminMessagesSerializer,
 )
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
@@ -19,6 +20,7 @@ from accounts.helpers import email_validator, create_jwt_pair_tokens
 from django.contrib.auth import authenticate
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
+from superuser.models import AdminMessages
 
 
 class DefaultPagination(PageNumberPagination):
@@ -124,6 +126,10 @@ class ProjectView(ListCreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     pagination_class = DefaultPagination
+
+class AdminMessageView(ListCreateAPIView):
+    queryset = AdminMessages.objects.all()
+    serializer_class = AdminMessagesSerializer
 
 
 @api_view(["PUT"])

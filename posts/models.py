@@ -58,6 +58,9 @@ class PostComment(models.Model):
     user       = models.ForeignKey(User,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, blank=True,null=True)
 
+    class Meta:
+        unique_together = ['post','comment','user']
+
     def __str__(self) -> str:
         return f"{self.user} commented on {self.post}"
 

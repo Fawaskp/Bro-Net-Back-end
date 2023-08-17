@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from accounts.models import UserProfile,User,Badges,Hub,Batch
 from accounts.models.models2 import Skill,SocialMedia,Project,EducationCategory
+from superuser.models import AdminMessages
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,4 +55,9 @@ class BadgeSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
+        fields = '__all__'
+
+class AdminMessagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdminMessages
         fields = '__all__'
