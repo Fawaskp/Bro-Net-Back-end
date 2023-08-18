@@ -1,8 +1,8 @@
 from rest_framework.generics import ListCreateAPIView, ListAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import BannerSerializer, PostSerializer,PostCommentsSerializer
-from .models import Banner, Post, ImagePost, VideoPost, PollPost, PostComment
+from .serializers import BannerSerializer, PostSerializer,PostCommentsSerializer,PostLikeSerializer, PollPostSerializer,PollPostRespondSerializer
+from .models import Banner, Post, ImagePost, VideoPost, PollPost, PostComment, PostLike, PollPostRespond, ArticlePost
 from accounts.models import User
 from accounts.models.models2 import Follow
 from rest_framework.decorators import api_view
@@ -36,23 +36,26 @@ class BannerDetailView(RetrieveUpdateDestroyAPIView):
     lookup_field     = 'id'
     pagination_class = DefaultPagination
 
-class GetAllPost(ListAPIView):
+class GetAllPost(APIView):
     serializer_class = PostSerializer
-
-    def get_queryset(self):
-        user_id = self.kwargs.get("user_id")
-        queryset = Post.objects.none()
+    def get(self, request, user_id, format=None):
         try:
-            if user_id is not None:
-                user = User.objects.get(id=user_id)
-                followings = Follow.objects.filter(following_user=user)
-                for instance in followings:
-                    queryset = queryset | Post.objects.filter(
-                        user=instance.followed_user
-                    )
-                return queryset.order_by('-id')
-        except:
-            return []
+            user = User.objects.get(id=user_id)
+            followings = Follow.objects.filter(following_user=user)
+            
+            queryset = Post.objects.none()
+            for instance in followings:
+                queryset |= Post.objects.filter(user=instance.followed_user)
+            
+            queryset = queryset.order_by('-id')
+            
+            serializer = self.serializer_class(queryset, many=True, context={'user_id': user_id})
+            return Response(serializer.data, status=200)
+        
+        except User.DoesNotExist:
+            return Response(status=404)
+        except Exception as e:
+            return Response(str(e), status=500)
 
 
 class PostImage(APIView):
@@ -103,7 +106,6 @@ class PostPoll(APIView):
         optioncount = request.data.get("optionscount")
         subject = request.data.get("subject")
         options = []
-        print('Request Data >>>? ',request.data)
         if "" in [user_id,optioncount,subject] and None in [user_id,optioncount,subject]:
             return Response(status=400, data={"message": "Bad request with some empty data field"})
 
@@ -129,6 +131,25 @@ class PostPoll(APIView):
             return Response(status=400, data={"message": f" {e}"})
         return Response(status=200, data={"message": "success"})
 
+class PostArticle(APIView):
+    def post(self, request):
+        user_id = request.data.get("user")
+        body = request.data.get("body")
+        try:
+            user_instance = User.objects.get(id=user_id)
+            post_instance = Post.objects.create(
+                user=user_instance, type="article"
+            )
+        except:
+            return Response(status=400, data={"message": "failed"})
+
+        try:
+            ArticlePost.objects.create(post=post_instance,body=body)
+        except:
+            return Response(status=400, data={"message": "something went wrong"})
+
+        return Response(status=201, data={"message": "sucess"})
+
 
 class PostCommentsView(ListCreateAPIView):
     serializer_class = PostCommentsSerializer
@@ -136,6 +157,58 @@ class PostCommentsView(ListCreateAPIView):
         post_id = self.kwargs.get("post_id")
         return PostComment.objects.filter(post__id=post_id)
 
+
+class PostLikeView(ListCreateAPIView):
+    serializer_class = PostLikeSerializer
+    def get_queryset(self):
+        post_id = self.kwargs.get("post_id")
+        return PostLike.objects.filter(post__id=post_id)
+
+class PollPostRespondView(ListCreateAPIView):
+    serializer_class = PollPostRespondSerializer
+    queryset = PollPostRespond.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        user_id = request.data.get('user')
+        option_id = request.data.get('post_poll')
+        selected_option = PollPost.objects.get(id=option_id)
+        is_exist = PollPostRespond.objects.filter(post_poll__post__id=selected_option.post.id, user_id=user_id).exists()
+        if is_exist:
+           try:
+                PollPostRespond.objects.get(post_poll__post__id=selected_option.post.id, user_id=user_id).delete()
+                post_poll_instance = PollPost.objects.get(id=option_id)
+                PollPostRespond.objects.create(post_poll=post_poll_instance,user=User.objects.get(id=user_id))
+                instances = PollPost.objects.filter(post__id=post_poll_instance.post.id).order_by('id')
+                options = []
+                for instance in instances:
+                    options.append(PollPostSerializer(instance).data)
+                return Response(status=200,data=options)
+           except Exception as e:
+               print("Got an Exception -->>  ",e) 
+               return Response(status=400,data={'message':'Something went wrong'})
+        else:
+            user = User.objects.get(id=user_id)
+            post_poll = PollPost.objects.get(id=option_id)
+            PollPostRespond.objects.create(user=user,post_poll=post_poll)
+            instances = PollPost.objects.filter(post__id=post_poll.post.id).order_by('id')
+            options = []
+            for instance in instances:
+                options.append(PollPostSerializer(instance).data)
+            return Response(status=200,data=options)
+
+ 
+@api_view(['POST'])
+def un_like_post(request):
+    user_id = request.data.get('user')
+    post_id = request.data.get('post')
+    is_post_exist = PostLike.objects.filter(post__id=post_id,user__id=user_id).exists()
+    if is_post_exist:
+        post_like_instance = PostLike.objects.get(post__id=post_id,user__id=user_id)
+        post_like_instance.delete()
+        return Response(status=204)
+    else:
+        return Response(status=404, data={"message": "given post not found"})
+    
 
 @api_view(["PUT", "PATCH"])
 def like_post(request, id):

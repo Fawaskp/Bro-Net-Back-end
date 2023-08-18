@@ -1,13 +1,12 @@
 from rest_framework.serializers import ModelSerializer,SerializerMethodField
-from .models import Banner,Post,ImagePost,VideoPost,ArticlePost,PollPost,PostComment
+from .models import Banner,Post,ImagePost,VideoPost,ArticlePost,PollPost,PostComment,PostLike,PollPostRespond
 from accounts.serializers.serializers import UserViewSerializer, UserProfileSerializer
-from accounts.models import UserProfile
+from accounts.models import UserProfile, User
 
 class BannerSerializer(ModelSerializer):
     class Meta:
         model = Banner
         fields = '__all__'
-
 
 class ImagePostSerializer(ModelSerializer):
     class Meta:
@@ -29,6 +28,16 @@ class PollPostSerializer(ModelSerializer):
         model = PollPost
         fields = '__all__'
 
+class PollPostRespondSerializer(ModelSerializer):
+    class Meta:
+        model = PollPostRespond
+        fields = '__all__'
+
+class PostLikeSerializer(ModelSerializer):
+    class Meta:
+        model = PostLike
+        fields = '__all__'
+
 class PostCommentsSerializer(ModelSerializer):
     user_detail = SerializerMethodField()
     class Meta:
@@ -46,6 +55,8 @@ class PostCommentsSerializer(ModelSerializer):
 class PostSerializer(ModelSerializer):
     post = SerializerMethodField()
     user = SerializerMethodField()
+    is_liked = SerializerMethodField()
+    poll_selected_option = SerializerMethodField()
     class Meta:
         model = Post
         fields = '__all__'
@@ -64,10 +75,15 @@ class PostSerializer(ModelSerializer):
                 return []
         elif obj.type == 'poll':
             post = []
-            instances = PollPost.objects.filter(post=obj)
+            instances = PollPost.objects.filter(post=obj).order_by('id')
             for instance in instances:
-                post.append((PollPostSerializer(instance).data.get('option')))
+                post.append((PollPostSerializer(instance).data))
             return post
+        elif obj.type == 'article':
+            try:
+                return [ArticlePostSerializer(ArticlePost.objects.get(post=obj)).data.get('body')]
+            except:
+                return []
             
     
     def get_user(self,obj):
@@ -78,3 +94,20 @@ class PostSerializer(ModelSerializer):
         userprofile_instance = UserProfile.objects.get(user=obj.user)
         result.update(profile_image=UserProfileSerializer(userprofile_instance).data.get('profile_image'))
         return result
+
+    def get_is_liked(self,obj):
+        user = User.objects.get(id=self.context.get('user_id'))    
+        print(PostLike.objects.filter(user=user,post=obj))
+        return PostLike.objects.filter(user=user,post=obj).exists()
+    
+    def get_poll_selected_option(self,obj):
+        if obj.type == 'poll':
+            user = User.objects.get(id=self.context.get('user_id'))   
+            is_exist = PollPostRespond.objects.filter(user=user,post_poll__post__id=obj.id).exists()
+            if is_exist:
+                instance = PollPostRespond.objects.get(user=user,post_poll__post__id=obj.id)
+                return PollPostRespondSerializer(instance).data.get('post_poll')
+            return None
+        else:
+            return None
+        
