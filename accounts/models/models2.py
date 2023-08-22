@@ -126,7 +126,8 @@ class Donts(models.Model):
     
 
 class Message(models.Model):
-    sender = models.ForeignKey("accounts.User", on_delete=models.CASCADE, null=True, blank=True)
+    sender = models.ForeignKey("accounts.User", on_delete=models.CASCADE, null=True, blank=True,related_name="sender_message_set")
+    receiver = models.ForeignKey("accounts.User", on_delete=models.CASCADE, null=True, blank=True,related_name="reciever_message_set")
     message = models.TextField(null=True, blank=True)
     thread_name = models.CharField(null=True, blank=True, max_length=200)
     timestamp = models.DateTimeField(auto_now_add=True)

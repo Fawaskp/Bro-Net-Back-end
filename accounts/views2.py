@@ -61,39 +61,6 @@ class SkillView(ListAPIView):
 
         return queryset
 
-
-class FollowView(APIView):
-    def get(self, request, user1, user2):
-        instance = Follow.objects.filter(
-            following_user__id=user1, followed_user__id=user2
-        )
-        is_followed = True if instance.exists() else False
-        status_code = 200 if is_followed else 404
-        print('status == ',status_code)
-        return Response(data={"is_followed": is_followed}, status=status_code)
-
-
-    def post(self, request, user1, user2):
-        try:
-            following_user = User.objects.get(id=user1)
-            followed_user = User.objects.get(id=user2)
-            Follow.objects.create(
-                following_user=following_user, followed_user=followed_user
-            )
-        except:
-            return Response(status=400)
-        return Response(status=201)
-
-    def delete(self, request, user1, user2):
-        instance = Follow.objects.filter(
-            following_user__id=user1, followed_user__id=user2
-        )
-        if instance.exists():
-            instance.delete()
-            return Response(status=204)
-
-
-
 class SkillDetail(APIView):
     def get_user_profile(self, user_id):
         try:
@@ -157,6 +124,45 @@ class SkillDetail(APIView):
             return Response(
                 {"Message": "Skill is not present in your profile", "status": 400}
             )
+
+
+
+class FollowView(APIView):
+    '''
+    Get-Method -> return whether user1 followed user2 or not
+    Post-Method -> to follow a user 
+    Delete-Method -> to unfollow  a user
+    '''
+    def get(self, request, user1, user2):
+        instance = Follow.objects.filter(
+            following_user__id=user1, followed_user__id=user2
+        )
+        is_followed = True if instance.exists() else False
+        status_code = 200 if is_followed else 404
+        print('status == ',status_code)
+        return Response(data={"is_followed": is_followed}, status=status_code)
+
+
+    def post(self, request, user1, user2):
+        try:
+            following_user = User.objects.get(id=user1)
+            followed_user = User.objects.get(id=user2)
+            Follow.objects.create(
+                following_user=following_user, followed_user=followed_user
+            )
+        except:
+            return Response(status=400)
+        return Response(status=201)
+    
+
+    def delete(self, request, user1, user2):
+        instance = Follow.objects.filter(
+            following_user__id=user1, followed_user__id=user2
+        )
+        if instance.exists():
+            instance.delete()
+            return Response(status=204)
+
 
 
 class UserSocialMediaAccountsView(ListCreateAPIView):

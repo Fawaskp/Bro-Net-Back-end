@@ -27,15 +27,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
-        print()
-        print('TextData >>>>>>>>>>>> ',data)
-        print()
         message = data["message"]
         sender_username = data["senderUsername"].replace('"', "")
+        reciever_username = data["recieverUsername"].replace('"', "")
         sender = await self.get_user(sender_username.replace('"', ""))
+        reciever = await self.get_user(reciever_username.replace('"', ""))
 
         await self.save_message(
-            sender=sender, message=message, thread_name=self.room_group_name
+            sender=sender, reciever=reciever, message=message, thread_name=self.room_group_name
         )
 
         messages = await self.get_messages()
@@ -70,14 +69,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_messages(self):
-        print()
-        print(Message.objects.filter(thread_name=self.room_group_name))
-        print()
         messages = []
         for instance in Message.objects.filter(thread_name=self.room_group_name):
             messages = MessageSerializer(instance).data
         return messages
 
     @database_sync_to_async
-    def save_message(self, sender, message, thread_name):
-        Message.objects.create(sender=sender, message=message, thread_name=thread_name)
+    def save_message(self, sender,reciever, message, thread_name):
+        Message.objects.create(sender=sender, receiver=reciever, message=message, thread_name=thread_name)

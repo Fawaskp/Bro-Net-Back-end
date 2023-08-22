@@ -4,9 +4,10 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .models import User,UserProfile,Hub,Batch,Stack,Dos,Donts,Message
 from .serializers.serializers import UserSearchSerializer, UserDetailSerializer,UserProfileSerializer,\
-HubSerializer,BatchSerializer, StackSerializer,DosSerializer,DontsSerializer,MessageSerializer
+HubSerializer,BatchSerializer, StackSerializer,DosSerializer,DontsSerializer,MessageSerializer,ChatListSerializer
 from .permission import IsAuthenticatedWithToken
 from rest_framework import filters
+from django.db.models import Q,F
 
 '''
 ViewUsers
@@ -126,3 +127,19 @@ class PreviousMessagesView(ListAPIView):
             thread_name=thread_name
         )
         return queryset
+
+class ChatListView(ListAPIView):
+    serializer_class = ChatListSerializer
+
+    def get_queryset(self):
+        user_id = int(self.kwargs['user_id'])
+        distinct_senders = Message.objects.filter(receiver__id=user_id).values('sender__username').distinct()
+        distinct_receivers = Message.objects.filter(sender__id=user_id).values('receiver__username').distinct()
+
+        distinct_usernames = set()
+        for entry in distinct_senders:
+            distinct_usernames.add(entry['sender__username'])
+
+        for entry in distinct_receivers:
+            distinct_usernames.add(entry['receiver__username'])
+        return distinct_usernames
