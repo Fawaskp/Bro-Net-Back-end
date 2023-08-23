@@ -97,7 +97,6 @@ class PostSerializer(ModelSerializer):
 
     def get_is_liked(self,obj):
         user = User.objects.get(id=self.context.get('user_id'))    
-        print(PostLike.objects.filter(user=user,post=obj))
         return PostLike.objects.filter(user=user,post=obj).exists()
     
     def get_poll_selected_option(self,obj):

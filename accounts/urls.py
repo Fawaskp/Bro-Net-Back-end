@@ -1,4 +1,5 @@
 from django.urls import path
+from .views_github_proxy import get_access_token,get_user_data
 from .views_login import (
     LoginWithSocialMedia,
     LoginWithEmail,
@@ -41,6 +42,10 @@ from .views2 import (
 
 
 urlpatterns = [
+
+    path('get_access_token/', get_access_token),
+    path('get_user_data/', get_user_data),
+
     path("search/<int:user_id>/", SearchUser.as_view()),
     path("profile/", ViewUserProfile.as_view()),
     path("login/email/", LoginWithEmail.as_view()),
