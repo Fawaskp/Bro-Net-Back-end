@@ -6,8 +6,8 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("secret_key")
-DEBUG = True
-ALLOWED_HOSTS = []
+DEBUG = config('DEBUG')
+ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
@@ -42,7 +42,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("localhost", 6379)],
+            "hosts": [(config('redis_domain_name'), config('redis_port_number'))],
         },
     },
 }
@@ -136,6 +136,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -146,9 +147,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.User"
 
-EMAIL_HOST_USER = "beatandbase01@gmail.com"
-EMAIL_HOST_PASSWORD = "cxeftukzhpmflcsx"
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
