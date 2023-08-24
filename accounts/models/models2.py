@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models.signals import post_save,post_delete
+from django.dispatch import receiver
+from .models import UserProfile
 
 '''
 Social-Media
@@ -134,3 +137,34 @@ class Message(models.Model):
 
     def __str__(self) -> str:
         return f'{self.sender.username}-{self.thread_name}' if self.sender else f'{self.message}-{self.thread_name}'
+
+
+
+@receiver(post_save, sender=Follow)
+def update_follow_counts(sender, instance, created, **kwargs):
+    if created:
+
+        followed_user = instance.followed_user
+        following_user = instance.following_user
+
+        followed_user_profile = UserProfile.objects.get(user=followed_user)
+        followed_user_profile.followers_count += 1 
+        followed_user_profile.save()
+
+        following_user_profile = UserProfile.objects.get(user=following_user)
+        following_user_profile.following_count += 1
+        following_user_profile.save()
+
+        
+@receiver(post_delete, sender=Follow)
+def update_follow_counts_on_delete(sender, instance, **kwargs):
+    followed_user = instance.followed_user
+    following_user = instance.following_user
+
+    followed_user_profile = UserProfile.objects.get(user=followed_user)
+    followed_user_profile.followers_count -= 1
+    followed_user_profile.save()
+
+    following_user_profile = UserProfile.objects.get(user=following_user)
+    following_user_profile.following_count -= 1
+    following_user_profile.save()

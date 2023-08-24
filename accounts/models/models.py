@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
 from django.utils import timezone
-from .models2 import Skill
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from datetime import timedelta, date
 from django.core.exceptions import ValidationError
 
@@ -150,7 +151,7 @@ class UserProfile(models.Model):
     badges = models.ManyToManyField(Badges, blank=True)
     hub = models.ForeignKey(Hub, on_delete=models.CASCADE, null=True, blank=True)
     batch = models.ForeignKey(Batch, on_delete=models.CASCADE, null=True, blank=True)
-    skills = models.ManyToManyField(Skill, blank=True)
+    skills = models.ManyToManyField('accounts.Skill', blank=True)
 
     def __str__(self) -> str:
         return self.user.fullname
@@ -179,3 +180,10 @@ class EmailChangeOtp(models.Model):
     new_email = models.CharField(max_length=50,null=True)
     otp = models.CharField(max_length=4)
     time = models.TimeField(auto_now_add=True)
+
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
