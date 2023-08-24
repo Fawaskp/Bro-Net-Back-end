@@ -1,6 +1,8 @@
 from rest_framework.serializers import ModelSerializer,SerializerMethodField
-from ..models import User,UserProfile,Hub,Batch,Stack,Dos,Donts,Message
+from ..models.models import User,UserProfile,Hub,Batch,Stack
+from ..models.models2 import Dos,Donts,Message
 from .serializers2 import SkillSerializer
+
 '''
 Serializers: 
 

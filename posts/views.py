@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import BannerSerializer, PostSerializer,PostCommentsSerializer,PostLikeSerializer, PollPostSerializer,PollPostRespondSerializer
 from .models import Banner, Post, ImagePost, VideoPost, PollPost, PostComment, PostLike, PollPostRespond, ArticlePost
-from accounts.models import User
+from accounts.models.models import User
 from accounts.models.models2 import Follow
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination

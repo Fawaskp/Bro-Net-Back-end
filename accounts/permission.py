@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission
 from .helpers import decode_jwt_payload
 import json
-from .models import User
+from .models.models import User
 
 def authenticate_request(request):
     auth_header = request.headers.get('Authorization')

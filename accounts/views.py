@@ -2,7 +2,8 @@ from rest_framework.generics import ListAPIView,ListCreateAPIView,CreateAPIView,
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .models import User,UserProfile,Hub,Batch,Stack,Dos,Donts,Message
+from .models.models import User,UserProfile,Hub,Batch,Stack
+from .models.models2 import Dos,Donts,Message
 from .serializers.serializers import UserSearchSerializer, UserDetailSerializer,UserProfileSerializer,\
 HubSerializer,BatchSerializer, StackSerializer,DosSerializer,DontsSerializer,MessageSerializer,ChatListSerializer
 from .permission import IsAuthenticatedWithToken

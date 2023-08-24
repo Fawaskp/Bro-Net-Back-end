@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer,SerializerMethodField
 from .models import Banner,Post,ImagePost,VideoPost,ArticlePost,PollPost,PostComment,PostLike,PollPostRespond
 from accounts.serializers.serializers import UserViewSerializer, UserProfileSerializer
-from accounts.models import UserProfile, User
+from accounts.models.models import UserProfile, User
 
 class BannerSerializer(ModelSerializer):
     class Meta:

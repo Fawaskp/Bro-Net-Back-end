@@ -2,7 +2,7 @@ from rest_framework.validators import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .models import User, LoginWithEmailData,EmailChangeOtp
+from .models.models import User, LoginWithEmailData,EmailChangeOtp
 from .helpers import (
     email_validator,
     generate_token,

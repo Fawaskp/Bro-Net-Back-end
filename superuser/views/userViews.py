@@ -1,5 +1,5 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from accounts.models import User, Badges, Hub, Batch
+from accounts.models.models import User, Badges, Hub, Batch
 from accounts.models.models2 import Skill, SocialMedia, Project, EducationCategory
 from ..serializers.userSerializer import (
     CombinedUserSerializer,

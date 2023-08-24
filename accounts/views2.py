@@ -8,7 +8,7 @@ from .models.models2 import (
     UserEducation,
     WorkExperience,
 )
-from .models import UserProfile, User
+from .models.models import UserProfile, User
 from .serializers.serializers2 import (
     SkillSerializer,
     SocialMediaSerializer,
