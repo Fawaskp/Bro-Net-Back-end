@@ -91,6 +91,7 @@ TEMPLATES = [
 ]
 
 
+WSGI_APPLICATION = "Project.wsgi.application"
 ASGI_APPLICATION = "Project.asgi.application"
 
 
