@@ -28,10 +28,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
         message = data["message"]
-        sender_username = data["senderUsername"].replace('"', "")
-        reciever_username = data["recieverUsername"].replace('"', "")
-        sender = await self.get_user(sender_username.replace('"', ""))
-        reciever = await self.get_user(reciever_username.replace('"', ""))
+        print()
+        print('Backend Data ---->>> ',data)
+        print()
+        sender_username = data["senderUsername"]
+        reciever_username = data["receiverUsername"]
+        sender = await self.get_user(sender_username)
+        reciever = await self.get_user(reciever_username)
 
         await self.save_message(
             sender=sender, reciever=reciever, message=message, thread_name=self.room_group_name
