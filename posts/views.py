@@ -38,6 +38,7 @@ class BannerDetailView(RetrieveUpdateDestroyAPIView):
 
 class GetAllPost(APIView):
     serializer_class = PostSerializer
+    pagination_class = DefaultPagination
     def get(self, request, user_id, format=None):
         try:
             user = User.objects.get(id=user_id)
@@ -48,9 +49,18 @@ class GetAllPost(APIView):
                 queryset |= Post.objects.filter(user=instance.followed_user)
             
             queryset = queryset.order_by('-id')
+            paginator = self.pagination_class()
+            paginated_queryset = paginator.paginate_queryset(queryset, request)
+            print('Query Set ::>> ',queryset)
+            print('Paginated Query Set ::>> ',paginated_queryset)
+            serializer = self.serializer_class(paginated_queryset, many=True, context={'user_id': user_id})
+
+            response_data = {
+                'count': queryset.count(),
+                'results': serializer.data,
+            }
             
-            serializer = self.serializer_class(queryset, many=True, context={'user_id': user_id})
-            return Response(serializer.data, status=200)
+            return Response(response_data, status=200)
         
         except User.DoesNotExist:
             return Response(status=404)
